@@ -1,0 +1,724 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   1. GLOBAL CONTAINER & FLOATING CARDS LAYOUT
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.messages-container,
+.messages-container * {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Outer Blue Gradient Area with Padding */
+.messages-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #b5d5e7 0%, #a7c8da 25%, #99bccc 50%, #8bb0bf 75%, #7fa1b0 100%);
+    background-attachment: fixed;
+    color: #062438;
+    overflow: hidden;
+    padding: 20px;
+    gap: 16px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* ==========================================================================
+   2. FLOATING SIDEBAR PANEL
+   ========================================================================== */
+.messages-sidebar {
+    width: 320px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(6, 36, 56, 0.08);
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   2. FLOATING SIDEBAR PANEL
+   ========================================================================== */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px 14px 20px;
+    border-bottom: 1px solid rgba(6, 36, 56, 0.08);
+    background: transparent;
+    gap: 12px; /* Added spacing to prevent overlap when inline */
+    flex-wrap: wrap; /* Allows natural stacked layout on smaller widths without clipping */
+}
+
+.sidebar-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    color: #062438;
+    line-height: 1.2;
+}
+
+/* Glassmorphism Archive Toggle Button */
+.archive-toggle-btn {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    color: #062438;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(6, 36, 56, 0.05);
+    white-space: nowrap; /* Prevents text inside the button from wrapping */
+    flex-shrink: 0;
+}
+
+.archive-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(6, 36, 56, 0.1);
+}
+
+/* Search Input Styling */
+.search-bar-wrapper {
+    padding: 12px 16px 12px 16px;
+    border-bottom: 1px solid rgba(6, 36, 56, 0.06);
+}
+
+.search-input-field {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 14px;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    color: #062438;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 3px rgba(6, 36, 56, 0.04);
+    transition: all 0.2s ease;
+}
+
+.search-input-field::placeholder {
+    color: #7fa1b0;
+}
+
+.search-input-field:focus {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: #062438;
+    box-shadow: 0 0 0 3px rgba(6, 36, 56, 0.08);
+}
+
+.conversation-list,
+.convo-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.no-convos-found {
+    padding: 24px;
+    text-align: center;
+    color: #08283e;
+    font-size: 0.85rem;
+    font-style: italic;
+    opacity: 0.75;
+}
+
+/* Sidebar Conversation Card */
+.convo-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(6, 36, 56, 0.06);
+    gap: 12px;
+}
+
+.convo-item:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.convo-item.active {
+    background-color: rgba(255, 255, 255, 0.75);
+    border-left: 4px solid #062438;
+}
+
+.convo-avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.convo-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(6, 36, 56, 0.1);
+}
+
+.online-status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    background-color: #059669;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(5, 150, 105, 0.5);
+}
+
+.unread-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background-color: #dc2626;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+}
+
+.convo-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.convo-info strong {
+    font-size: 0.9rem;
+    color: #062438;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.convo-info p {
+    font-size: 0.8rem;
+    color: #08283e;
+    margin: 2px 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.85;
+}
+
+/* ==========================================================================
+   3. FLOATING CHAT MAIN CARD
+   ========================================================================== */
+.chat-main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(6, 36, 56, 0.08);
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(6, 36, 56, 0.08);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.chat-header-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.chat-header-user h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #062438;
+}
+
+.chat-header-user span {
+    font-size: 0.8rem;
+    color: #08283e;
+    opacity: 0.8;
+}
+
+/* ==========================================================================
+   4. CHAT HISTORY & MESSAGE BUBBLES
+   ========================================================================== */
+.chat-history {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.msg-row {
+    display: flex !important;
+    align-items: flex-end;
+    width: 100%;
+    gap: 10px;
+}
+
+.msg-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Sent Messages (Right) */
+.msg-sent {
+    justify-content: flex-end !important;
+}
+
+.sent-container {
+    max-width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.msg-bubble.sent {
+    background: #062438 !important;
+    color: #ffffff !important;
+    border-radius: 18px 18px 4px 18px !important;
+    box-shadow: 0 2px 8px rgba(6, 36, 56, 0.2) !important;
+    padding: 12px 18px !important;
+    font-size: 0.88rem !important;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+/* Received Messages (Left) */
+.msg-received {
+    justify-content: flex-start !important;
+}
+
+.received-container {
+    max-width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.msg-bubble.received {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #062438 !important;
+    border: 1px solid rgba(255, 255, 255, 0.95) !important;
+    border-radius: 18px 18px 18px 4px !important;
+    box-shadow: 0 2px 8px rgba(6, 36, 56, 0.06) !important;
+    padding: 12px 18px !important;
+    font-size: 0.88rem !important;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.message-image-attachment {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Claim Requests Styling inside Chat Bubble */
+.claim-actions-wrapper {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(6, 36, 56, 0.08);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.claim-btn {
+    flex: 1;
+    color: #ffffff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.claim-btn.approve-btn {
+    background-color: #059669;
+}
+
+.claim-btn.reject-btn {
+    background-color: #d32f2f;
+}
+
+.claim-status-badge {
+    width: 100%;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.claim-status-badge.status-approved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.claim-status-badge.status-rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.msg-time {
+    font-size: 11px;
+    opacity: 0.75;
+    display: block;
+    margin-top: 4px;
+    font-weight: 500;
+    color: #062438;
+}
+
+.sender-tag {
+    font-size: 11px;
+    margin-left: 4px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   5. FLOATING INPUT CONTAINER & SEND BUTTON
+   ========================================================================== */
+/* ==========================================================================
+   5. FLOATING INPUT CONTAINER & SEND BUTTON
+   ========================================================================== */
+.chat-input-section {
+    padding: 16px 20px;
+    background: transparent;
+}
+
+.image-preview-bar {
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    gap: 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    color: #062438;
+}
+
+.image-preview-bar button {
+    border: none;
+    background: none;
+    color: #d32f2f;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.input-box-container {
+    position: relative;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    border-radius: 28px;
+    padding: 6px 12px 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 10px rgba(6, 36, 56, 0.06);
+}
+
+.input-with-sender {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+    gap: 8px;
+}
+
+textarea {
+    flex: 1;
+    height: 38px;
+    min-height: 38px;
+    max-height: 100px;
+    resize: none !important; /* Disables textarea resize handle */
+    padding: 8px 6px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #062438;
+    font-size: 0.88rem;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.4;
+}
+
+textarea::placeholder {
+    color: #7fa1b0;
+}
+
+/* Updated Attachment SVG Icon Button */
+.attachment-btn {
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    color: #062438;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+    flex-shrink: 0;
+}
+
+.attachment-btn:hover {
+    background-color: rgba(6, 36, 56, 0.08);
+    transform: scale(1.05);
+}
+
+/* Updated Circular Send Message SVG Button */
+.send-message-btn {
+    background: #062438;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px rgba(6, 36, 56, 0.25);
+    margin-right: 2px;
+}
+
+.send-message-btn:hover:not(:disabled) {
+    background: #0b3857;
+    transform: scale(1.06);
+    box-shadow: 0 4px 10px rgba(6, 36, 56, 0.35);
+}
+
+.send-message-btn:disabled {
+    background: #a2b8c6;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.6;
+}
+
+.sender-tag-right {
+    position: absolute;
+    right: 12px;
+    top: -14px;
+    background: #062438;
+    color: #ffffff;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(6, 36, 56, 0.2);
+}
+
+.empty-chat-state {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #183e58;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   6. CONTEXT MENU & UNDO TOAST
+   ========================================================================== */
+.glass-context-menu {
+    position: absolute;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(6, 36, 56, 0.15);
+    min-width: 160px;
+    overflow: hidden;
+}
+
+.glass-context-menu button {
+    background: transparent;
+    border: none;
+    padding: 10px 14px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #062438;
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.15s ease;
+}
+
+.glass-context-menu button:hover {
+    background: rgba(6, 36, 56, 0.06);
+}
+
+.glass-context-menu button.delete-option {
+    color: #d32f2f;
+}
+
+.undo-toast-banner {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #062438;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(6, 36, 56, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 2000;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.undo-toast-banner button {
+    background-color: #b5d5e7;
+    color: #062438;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+    transition: transform 0.15s ease;
+}
+
+.undo-toast-banner button:hover {
+    transform: scale(1.05);
+}
+/* ==========================================================================
+   MOBILE RESPONSIVE MEDIA QUERIES (Messages)
+   ========================================================================== */
+.mobile-back-btn {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .messages-container {
+        padding: 0;
+        gap: 0;
+        height: 100vh;
+        height: -webkit-fill-available;
+    }
+
+    .messages-sidebar {
+        width: 100%;
+        min-width: 100%;
+        border-radius: 0;
+        border: none;
+        height: 100%;
+        display: flex;
+    }
+
+    .chat-main-area {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        border: none;
+        display: none;
+    }
+
+    /* Single pane view transition on mobile */
+    .messages-container.mobile-chat-active .messages-sidebar {
+        display: none;
+    }
+
+    .messages-container.mobile-chat-active .chat-main-area {
+        display: flex;
+    }
+
+    .mobile-back-btn {
+        display: inline-flex;
+        align-items: center;
+        background: transparent;
+        border: none;
+        color: #062438;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding-right: 12px;
+    }
+
+    .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+    }
+
+    .sent-container, .received-container {
+        max-width: 85%;
+    }
+
+    .chat-input-section {
+        padding: 12px 14px;
+    }
+
+    .input-box-container {
+        padding: 4px 8px 4px 6px;
+    }
+
+    textarea {
+        font-size: 0.85rem;
+    }
+
+    .undo-toast-banner {
+        width: 90%;
+        bottom: 16px;
+        padding: 8px 14px;
+        font-size: 0.78rem;
+    }
+}

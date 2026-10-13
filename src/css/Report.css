@@ -1,0 +1,306 @@
+/* ==========================================
+   GOOGLE FONTS IMPORT
+   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================
+   PAGE CANVAS & SLATE BLUE GRADIENT BACKGROUND
+   ========================================== */
+.report-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 16px;
+    min-height: calc(100vh - 70px);
+    background: linear-gradient(
+        112deg,
+        #b5d5e7 0%,   /* Lightest sky blue */
+        #a7c8da 25%,  /* Mid-light blue */
+        #99bccc 50%,  /* Middle slate blue */
+        #8bb0bf 75%,  /* Mid-dark slate blue */
+        #7fa1b0 100%  /* Dark slate blue */
+    );
+    background-attachment: fixed;
+    color: #062438;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+.report-item-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* ==========================================
+   THE FLOATING GLASS PANEL
+   ========================================== */
+.report-item-box {
+    background: rgba(255, 255, 255, 0.88); 
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.9); 
+    border-radius: 20px; 
+    box-shadow: 0 15px 35px rgba(6, 36, 56, 0.2); 
+    width: 100%;
+    max-width: 580px; 
+    padding: 28px;
+    box-sizing: border-box;
+}
+
+/* ==========================================
+   HEADER & STATUS BAR
+   ========================================== */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.form-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #062438;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.status-banner {
+    background: rgba(6, 36, 56, 0.05);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 0.825rem;
+    color: #08283e;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.status-banner strong.lost {
+    color: #dc2626;
+}
+
+.status-banner strong.found {
+    color: #059669;
+}
+
+/* ==========================================
+   STATUS TOGGLES
+   ========================================== */
+.status-selector {
+    display: flex;
+    border: 1px solid rgba(6, 36, 56, 0.2);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 3px;
+    gap: 3px;
+}
+
+.toggle-btn {
+    padding: 5px 14px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.8rem;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    background-color: transparent;
+    color: #183e58;
+    border-radius: 16px;
+    transition: all 0.25s ease;
+}
+
+.toggle-btn.lost-btn.selected {
+    background-color: rgba(220, 38, 38, 0.15);
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.toggle-btn.found-btn.selected {
+    background-color: rgba(5, 150, 105, 0.15);
+    color: #059669;
+    border-color: rgba(5, 150, 105, 0.3);
+}
+
+.toggle-btn:hover:not(.selected) {
+    background-color: rgba(255, 255, 255, 0.35);
+    color: #062438;
+}
+
+/* ==========================================
+   FORM GRID & INPUTS
+   ========================================== */
+.report-item-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: opacity 0.3s ease;
+}
+
+.form-faded {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 520px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.input-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.input-block label {
+    font-weight: 600;
+    color: #062438;
+    font-size: 0.825rem;
+    padding-left: 2px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.input-block input[type="text"],
+.input-block select,
+.input-block input[type="date"],
+.input-block input[type="time"],
+.description-box textarea {
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(6, 36, 56, 0.22);
+    border-radius: 10px;
+    padding: 9px 12px;
+    color: #08283e;
+    outline: none;
+    font-size: 0.875rem;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.25s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-block input[type="text"]::placeholder,
+.description-box textarea::placeholder {
+    color: #8bb0bf;
+}
+
+.input-block input:focus,
+.input-block select:focus,
+.description-box textarea:focus {
+    background-color: #ffffff;
+    border-color: #062438;
+    box-shadow: 0 0 0 3px rgba(6, 36, 56, 0.12);
+}
+
+.description-box textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* File Upload Custom Area */
+.file-upload-wrapper input[type="file"] {
+    background-color: rgba(6, 36, 56, 0.05);
+    border: 1px dashed rgba(6, 36, 56, 0.25);
+    border-radius: 10px;
+    padding: 7px 10px;
+    color: #08283e;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.file-upload-wrapper input[type="file"]::file-selector-button {
+    background-color: #062438;
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-right: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.file-upload-wrapper input[type="file"]::file-selector-button:hover {
+    background-color: #18415d;
+}
+
+/* ==========================================
+   SUBMIT BUTTON
+   ========================================== */
+.final-report-btn {
+    background: #062438;
+    color: #ffffff;
+    padding: 11px 24px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(6, 36, 56, 0.2);
+    transition: all 0.25s ease;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.final-report-btn:hover:not(:disabled) {
+    background: #18415d;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(6, 36, 56, 0.3);
+}
+
+.final-report-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ==========================================
+   LOADING OVERLAY
+   ========================================== */
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.loading-overlay p {
+    color: #062438;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: 12px;
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(6, 36, 56, 0.15);
+    border-top: 3px solid #062438;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
