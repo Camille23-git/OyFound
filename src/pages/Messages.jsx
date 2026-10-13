@@ -485,13 +485,12 @@ function Messages() {
             });
 
             await updateDoc(doc(db, "messages", selectedChat.id), {
-                message: messagePreviewText,
-                lastSenderRole: 'admin',
-                lastSender: 'admin',
-                timestamp: serverTimestamp(),
-                unread: false,
-                unreadStudent: true,
-                isArchived: false
+            status: "active",
+            message: messagePreviewText,
+            lastSenderRole: 'admin',
+            lastSender: 'admin',
+            timestamp: serverTimestamp(),
+            unread: false,
             });
 
             setReplyText("");

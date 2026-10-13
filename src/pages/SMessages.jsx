@@ -289,7 +289,7 @@ function SMessages() {
                         </div>
 
                         <div className="chat-history">
-                            {chatHistory.map((msg) => {
+                            {chatHistory && chatHistory?.map((msg) => {
                                 const isYourMessage = msg.role === 'student' || msg.sender === 'student' || msg.senderId === user.uid;
 
                                 return (
