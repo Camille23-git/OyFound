@@ -28,9 +28,10 @@ function SMessages() {
     const studentDocId = useMemo(() => user ? user.uid : null, [user]);
 
     const unreadCount = useMemo(() => {
+        if (!chatHistory || !Array.isArray(chatHistory)) return 0;
         return chatHistory.filter(msg => {
-            const isAdminMsg = msg.role !== 'student' && msg.sender !== 'student' && msg.senderId !== user?.uid;
-            return isAdminMsg && (msg.unreadByStudent === true || msg.unread === true);
+            const isAdminMsg = msg?.role !== 'student' && msg?.sender !== 'student' && msg?.senderId !== user?.uid;
+            return isAdminMsg && (msg?.unreadByStudent === true || msg?.unread === true);
         }).length;
     }, [chatHistory, user?.uid]);
 
@@ -108,7 +109,8 @@ function SMessages() {
     };
 
     const handleSendToAdmin = async () => {
-        if ((!studentMessage.trim() && !imageFile) || !user || !studentDocId) {
+        const messageText = typeof studentMessage === 'string' ? studentMessage : "";
+        if ((!messageText.trim() && !imageFile) || !user || !studentDocId) {
             alert("Please type a message or select an image.");
             return;
         }
@@ -143,32 +145,32 @@ function SMessages() {
             const finalStudentName = `${activeFirstName} ${activeLastName}`.trim() || activeEmail.split('@')[0] || "User";
             const mainDocRef = doc(db, "messages", studentDocId);
 
-    await setDoc(mainDocRef, {
-        firstName: activeFirstName,
-        lastName: activeLastName,
-        fullName: finalStudentName,
-        email: activeEmail,
-        avatarUrl: user.photoURL || DEFAULT_ICON,
-        message: imageUrl ? "📷 Sent an image" : studentMessage,
-        timestamp: serverTimestamp(),
-        unread: true,
-        unreadStudent: false,
-        isDeleted: false,
-        isArchived: false,
-        status: "active",
-        lastSenderRole: 'student',
-        lastSender: 'student'
-    }, { merge: true });
+            await setDoc(mainDocRef, {
+                firstName: activeFirstName,
+                lastName: activeLastName,
+                fullName: finalStudentName,
+                email: activeEmail,
+                avatarUrl: user.photoURL || DEFAULT_ICON,
+                message: imageUrl ? "📷 Sent an image" : messageText,
+                timestamp: serverTimestamp(),
+                unread: true,
+                unreadStudent: false,
+                isDeleted: false,
+                isArchived: false,
+                status: "active",
+                lastSenderRole: 'student',
+                lastSender: 'student'
+            }, { merge: true });
 
-    await addDoc(collection(db, "messages", studentDocId, "replies"), {
-        text: studentMessage || "",
-        imageUrl: imageUrl,
-        sender: "student",
-        senderName: finalStudentName,
-        senderId: user.uid,
-        role: 'student',
-        timestamp: serverTimestamp(),
-    });
+            await addDoc(collection(db, "messages", studentDocId, "replies"), {
+                text: messageText || "",
+                imageUrl: imageUrl,
+                sender: "student",
+                senderName: finalStudentName,
+                senderId: user.uid,
+                role: 'student',
+                timestamp: serverTimestamp(),
+            });
 
             setStudentMessage("");
             setImageFile(null);
@@ -291,31 +293,31 @@ function SMessages() {
 
                         <div className="chat-history">
                             {chatHistory && chatHistory.length > 0 ? (
-    chatHistory.map((msg) => {
-        const isYourMessage = msg.role === 'student' || msg.sender === 'student' || msg.senderId === user?.uid;
+                                chatHistory.map((msg) => {
+                                    const isYourMessage = msg?.role === 'student' || msg?.sender === 'student' || msg?.senderId === user?.uid;
 
-        return (
-            <div key={msg.id} className={`msg-row ${isYourMessage ? 'msg-sent' : 'msg-received'}`}>
-                {!isYourMessage && <img src={adminProfile?.avatarUrl} alt="" className="msg-avatar" />}
-                <div className={isYourMessage ? 'sent-container' : 'received-container'}>
-                    <div className={`msg-bubble ${isYourMessage ? 'sent' : 'received'}`}>
-                        {msg.imageUrl && (
-                            <img src={msg.imageUrl} alt="" className="message-image-attachment" />
-                        )}
-                        {msg.text && <span>{renderFormattedText(msg.text)}</span>}
-                    </div>
-                    <span className="msg-time">{formatDateTime(msg.timestamp)}</span>
-                </div>
-            </div>
-        );
-    })
-) : (
-    <div className="no-messages" style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
-        No message history yet. Start a conversation below!
-    </div>
-)}
+                                    return (
+                                        <div key={msg.id || Math.random()} className={`msg-row ${isYourMessage ? 'msg-sent' : 'msg-received'}`}>
+                                            {!isYourMessage && <img src={adminProfile?.avatarUrl} alt="" className="msg-avatar" />}
+                                            <div className={isYourMessage ? 'sent-container' : 'received-container'}>
+                                                <div className={`msg-bubble ${isYourMessage ? 'sent' : 'received'}`}>
+                                                    {msg?.imageUrl && (
+                                                        <img src={msg.imageUrl} alt="" className="message-image-attachment" />
+                                                    )}
+                                                    {msg?.text && <span>{renderFormattedText(msg.text)}</span>}
+                                                </div>
+                                                <span className="msg-time">{formatDateTime(msg?.timestamp)}</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className="no-messages" style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                    No message history yet. Start a conversation below!
+                                </div>
+                            )}
                             
-                            {chatHistory.length === 0 && (
+                            {(!chatHistory || chatHistory.length === 0) && (
                                 <div className="msg-row msg-received">
                                     <img src={adminProfile.avatarUrl} alt="" className="msg-avatar" />
                                     <div className="received-container">
@@ -355,7 +357,7 @@ function SMessages() {
                                         value={studentMessage}
                                         disabled={uploading}
                                         rows="1"
-                                        onChange={(e) => setStudentMessage(e.value)}
+                                        onChange={(e) => setStudentMessage(e.target.value)}
                                         onKeyDown={(e) => { 
                                             if(e.key === 'Enter' && !e.shiftKey) { 
                                                 e.preventDefault(); 
