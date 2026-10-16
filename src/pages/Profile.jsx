@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { auth, db } from '../firebase';
+import '../css/Profile.css';
 
 function Profile({ setRole }) {
     const navigate = useNavigate();
@@ -169,7 +170,7 @@ function Profile({ setRole }) {
     if (loading) {
         return (
             <div className="profile-dashboard-layout d-flex align-items-center justify-content-center">
-                <p style={{ color: '#E0E1DD' }}>Loading Workspace...</p>
+                <p style={{ color: '#062438', fontWeight: 600 }}>Loading Workspace...</p>
             </div>
         );
     }
@@ -178,7 +179,7 @@ function Profile({ setRole }) {
         return (
             <div className="profile-dashboard-layout d-flex align-items-center justify-content-center">
                 <div className="dashboard-data-card" style={{ textAlign: 'center' }}>
-                    <p style={{ color: '#f87171' }}>{error}</p>
+                    <p style={{ color: '#dc2626', fontWeight: 600 }}>{error}</p>
                     <button
                         type="button"
                         className="btn-action-primary w-100"
@@ -219,174 +220,176 @@ function Profile({ setRole }) {
 
     return (
         <div className="profile-dashboard-layout">
-            <div className="profile-grid-container">
-                {/* IDENTITY SIDEBAR */}
-                <aside className="hero-identity-sidebar">
-                    <div className="sidebar-backdrop-glow"></div>
+            <div className="profile-main-wrapper">
+                <h1 className="workspace-main-title">Account Workspace</h1>
 
-                    <div className="identity-card-core">
-                        <div className="avatar-frame-premium">
-                            {userData.photoURL ? (
-                                <img
-                                    src={userData.photoURL}
-                                    alt={fullName}
-                                    className="dashboard-avatar-img"
-                                    onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                        const fallback = e.currentTarget.nextSibling;
-                                        if (fallback) fallback.style.display = 'flex';
+                <div className="profile-grid-container">
+                    {/* IDENTITY SIDEBAR */}
+                    <aside className="hero-identity-sidebar">
+                        <div className="sidebar-backdrop-glow"></div>
+
+                        <div className="identity-card-core">
+                            <div className="avatar-frame-premium">
+                                {userData.photoURL ? (
+                                    <img
+                                        src={userData.photoURL}
+                                        alt={fullName}
+                                        className="dashboard-avatar-img"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                            const fallback = e.currentTarget.nextSibling;
+                                            if (fallback) fallback.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : null}
+
+                                <div
+                                    className="profile-icon-fallback"
+                                    style={{
+                                        display: userData.photoURL ? 'none' : 'flex',
                                     }}
-                                />
-                            ) : null}
+                                >
+                                    {initial}
+                                </div>
 
-                            <div
-                                className="profile-icon-fallback"
-                                style={{
-                                    display: userData.photoURL ? 'none' : 'flex',
-                                }}
+                                {/* DYNAMIC ONLINE/OFFLINE BADGE */}
+                                <div
+                                    className={isOnline ? "pulse-indicator-online" : "pulse-indicator-offline"}
+                                    title={isOnline ? "Online" : "Offline"}
+                                    style={{
+                                        backgroundColor: isOnline ? '#059669' : '#9ca3af',
+                                        boxShadow: isOnline ? '0 0 8px rgba(5, 150, 105, 0.4)' : 'none'
+                                    }}
+                                ></div>
+                            </div>
+
+                            <div className="identity-text-stack">
+                                <h2 className="user-display-name">{fullName}</h2>
+                                <span className="user-role-pill">{formattedRole}</span>
+                            </div>
+                        </div>
+
+                        <div className="sidebar-action-footer">
+                            <Link
+                                to="/edit-profile"
+                                className="btn-action-primary w-100 mb-2 d-flex align-items-center justify-content-center"
+                                style={{ textDecoration: 'none' }}
                             >
-                                {initial}
-                            </div>
+                                Edit Profile
+                            </Link>
 
-                            {/* DYNAMIC ONLINE/OFFLINE BADGE */}
-                            <div
-                                className={isOnline ? "pulse-indicator-online" : "pulse-indicator-offline"}
-                                title={isOnline ? "Online" : "Offline"}
-                                style={{
-                                    backgroundColor: isOnline ? '#059669' : '#9ca3af',
-                                    boxShadow: isOnline ? '0 0 8px rgba(5, 150, 105, 0.4)' : 'none'
-                                }}
-                            ></div>
+                            <button
+                                type="button"
+                                className="profile-logout-button"
+                                onClick={handleLogout}
+                                disabled={loggingOut}
+                            >
+                                {loggingOut ? 'Logging out...' : 'Logout'}
+                            </button>
                         </div>
+                    </aside>
 
-                        <div className="identity-text-stack">
-                            <h2 className="user-display-name">{fullName}</h2>
-                            <span className="user-role-pill">{formattedRole}</span>
-                        </div>
-                    </div>
-
-                    <div className="sidebar-action-footer">
-                        <Link
-                            to="/edit-profile"
-                            className="btn-action-primary w-100 mb-2 d-flex align-items-center justify-content-center"
-                            style={{ textDecoration: 'none' }}
-                        >
-                            Edit Profile
-                        </Link>
-
-                        <button
-                            type="button"
-                            className="profile-logout-button"
-                            onClick={handleLogout}
-                            disabled={loggingOut}
-                        >
-                            {loggingOut ? 'Logging out...' : 'Logout'}
-                        </button>
-                    </div>
-                </aside>
-
-                {/* MAIN WORKSPACE */}
-                <main className="workspace-main-content">
-                    <h1 className="workspace-main-title">Account Workspace</h1>
-
-                    <div className="dashboard-cards-grid">
-                        <div className="dashboard-data-card">
-                            <div className="card-indicator-line"></div>
-                            <h3 className="data-card-title">Personal Details</h3>
-                            <div className="meta-data-block">
-                                <label>Full Name</label>
-                                <p>{fullName}</p>
-                            </div>
-                            <div className="meta-data-block">
-                                <label>Gender</label>
-                                <p style={{ textTransform: 'capitalize' }}>{userData.gender || 'N/A'}</p>
-                            </div>
-                            <div className="meta-data-block">
-                                <label>Date of Birth</label>
-                                <p>{userData.birthdate || 'N/A'}</p>
-                            </div>
-                        </div>
-
-                        <div className="dashboard-data-card">
-                            <div className="card-indicator-line variant-accent"></div>
-                            <h3 className="data-card-title">Contact & Security</h3>
-                            {userData.email ? (
-                                <div className="meta-data-block">
-                                    <label>Email Address</label>
-                                    <p>{userData.email}</p>
-                                </div>
-                            ) : (
-                                <div className="meta-data-block">
-                                    <label>Account Type</label>
-                                    <p>Elementary Student (No Email)</p>
-                                </div>
-                            )}
-                            {userData.phone && (
-                                <div className="meta-data-block">
-                                    <label>Phone Number</label>
-                                    <p>{userData.phone}</p>
-                                </div>
-                            )}
-                            <div className="meta-data-block">
-                                <label>Role Type</label>
-                                <p>{formattedRole}</p>
-                            </div>
-                        </div>
-
-                        {userData.role === 'student' && (
-                            <div className="dashboard-data-card" style={{ gridColumn: '1 / -1' }}>
+                    {/* MAIN WORKSPACE */}
+                    <main className="workspace-main-content">
+                        <div className="dashboard-cards-grid">
+                            <div className="dashboard-data-card">
                                 <div className="card-indicator-line"></div>
-                                <h3 className="data-card-title">Academic Profile</h3>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
-                                    {userData.studentId && (
-                                        <div className="meta-data-block">
-                                            <label>Student ID</label>
-                                            <p>{userData.studentId}</p>
-                                        </div>
-                                    )}
-                                    <div className="meta-data-block">
-                                        <label>Department</label>
-                                        <p>{userData.department || 'N/A'}</p>
-                                    </div>
-                                    {userData.department === 'College' && (
-                                        <>
-                                            <div className="meta-data-block">
-                                                <label>Program / Major</label>
-                                                <p>{userData.collegeDept || 'N/A'}</p>
-                                            </div>
-                                            <div className="meta-data-block">
-                                                <label>Year Level</label>
-                                                <p>Year {userData.yearLevel || 'N/A'}</p>
-                                            </div>
-                                            <div className="meta-data-block">
-                                                <label>Block</label>
-                                                <p>Block {userData.block || 'N/A'}</p>
-                                            </div>
-                                        </>
-                                    )}
-                                    {userData.department === 'Senior High' && (
-                                        <div className="meta-data-block">
-                                            <label>Strand / Track</label>
-                                            <p>{userData.shsCourse || 'N/A'}</p>
-                                        </div>
-                                    )}
-                                    {userData.department === 'Junior High' && (
-                                        <div className="meta-data-block">
-                                            <label>Grade Level</label>
-                                            <p>Grade {userData.jhsGradeLevel || 'N/A'}</p>
-                                        </div>
-                                    )}
-                                    {userData.department === 'Elementary' && (
-                                        <div className="meta-data-block">
-                                            <label>Grade Level</label>
-                                            <p>{userData.elementaryGradeLevel ? `Grade ${userData.elementaryGradeLevel}` : 'N/A'}</p>
-                                        </div>
-                                    )}
+                                <h3 className="data-card-title">Personal Details</h3>
+                                <div className="meta-data-block">
+                                    <label>Full Name</label>
+                                    <p>{fullName}</p>
+                                </div>
+                                <div className="meta-data-block">
+                                    <label>Gender</label>
+                                    <p style={{ textTransform: 'capitalize' }}>{userData.gender || 'N/A'}</p>
+                                </div>
+                                <div className="meta-data-block">
+                                    <label>Date of Birth</label>
+                                    <p>{userData.birthdate || 'N/A'}</p>
                                 </div>
                             </div>
-                        )}
-                    </div>
-                </main>
+
+                            <div className="dashboard-data-card">
+                                <div className="card-indicator-line variant-accent"></div>
+                                <h3 className="data-card-title">Contact & Security</h3>
+                                {userData.email ? (
+                                    <div className="meta-data-block">
+                                        <label>Email Address</label>
+                                        <p>{userData.email}</p>
+                                    </div>
+                                ) : (
+                                    <div className="meta-data-block">
+                                        <label>Account Type</label>
+                                        <p>Elementary Student (No Email)</p>
+                                    </div>
+                                )}
+                                {userData.phone && (
+                                    <div className="meta-data-block">
+                                        <label>Phone Number</label>
+                                        <p>{userData.phone}</p>
+                                    </div>
+                                )}
+                                <div className="meta-data-block">
+                                    <label>Role Type</label>
+                                    <p>{formattedRole}</p>
+                                </div>
+                            </div>
+
+                            {userData.role === 'student' && (
+                                <div className="dashboard-data-card" style={{ gridColumn: '1 / -1' }}>
+                                    <div className="card-indicator-line"></div>
+                                    <h3 className="data-card-title">Academic Profile</h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
+                                        {userData.studentId && (
+                                            <div className="meta-data-block">
+                                                <label>Student ID</label>
+                                                <p>{userData.studentId}</p>
+                                            </div>
+                                        )}
+                                        <div className="meta-data-block">
+                                            <label>Department</label>
+                                            <p>{userData.department || 'N/A'}</p>
+                                        </div>
+                                        {userData.department === 'College' && (
+                                            <>
+                                                <div className="meta-data-block">
+                                                    <label>Program / Major</label>
+                                                    <p>{userData.collegeDept || 'N/A'}</p>
+                                                </div>
+                                                <div className="meta-data-block">
+                                                    <label>Year Level</label>
+                                                    <p>Year {userData.yearLevel || 'N/A'}</p>
+                                                </div>
+                                                <div className="meta-data-block">
+                                                    <label>Block</label>
+                                                    <p>Block {userData.block || 'N/A'}</p>
+                                                </div>
+                                            </>
+                                        )}
+                                        {userData.department === 'Senior High' && (
+                                            <div className="meta-data-block">
+                                                <label>Strand / Track</label>
+                                                <p>{userData.shsCourse || 'N/A'}</p>
+                                            </div>
+                                        )}
+                                        {userData.department === 'Junior High' && (
+                                            <div className="meta-data-block">
+                                                <label>Grade Level</label>
+                                                <p>Grade {userData.jhsGradeLevel || 'N/A'}</p>
+                                            </div>
+                                        )}
+                                        {userData.department === 'Elementary' && (
+                                            <div className="meta-data-block">
+                                                <label>Grade Level</label>
+                                                <p>{userData.elementaryGradeLevel ? `Grade ${userData.elementaryGradeLevel}` : 'N/A'}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </main>
+                </div>
             </div>
         </div>
     );
