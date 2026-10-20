@@ -1,9 +1,11 @@
-import { signOut } from "firebase/auth";
+
 import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 
 import "./App.css";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
 
 // Public pages
 import ForgotPassword from "./components/Forgotpassword.jsx";
@@ -51,25 +53,99 @@ function App() {
         () => localStorage.getItem("userRole") || null
     );
 
+    const [authLoading, setAuthLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-
     const [showContact, setShowContact] = useState(false);
     const [showAbout, setShowAbout] = useState(false);
 
-    // Development reset
-    useEffect(() => {
-        const resetAuth = async () => {
-            try {
-                await signOut(auth);
-                localStorage.removeItem("userRole");
-                setRole(null);
-            } catch (error) {
-                console.error("Error signing out:", error);
-            }
-        };
+    const location = useLocation();
 
-        resetAuth();
+    // Restore Firebase authentication and the user's role.
+    useEffect(() => {
+        let isMounted = true;
+
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                if (isMounted) {
+                    localStorage.removeItem("userRole");
+                    setRole(null);
+                    setAuthLoading(false);
+                }
+                return;
+            }
+
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const userSnapshot = await getDoc(userRef);
+
+                if (!isMounted) return;
+
+                if (userSnapshot.exists()) {
+                    const userData = userSnapshot.data();
+                    const userRole = userData.role;
+
+                    if (userRole === "admin" || userRole === "student") {
+                        localStorage.setItem("userRole", userRole);
+                        setRole(userRole);
+                    } else {
+                        localStorage.removeItem("userRole");
+                        setRole(null);
+                    }
+                } else {
+                    localStorage.removeItem("userRole");
+                    setRole(null);
+                }
+            } catch (error) {
+                console.error("Error restoring user role:", error);
+
+                // Keep the cached role during a temporary Firestore error.
+                if (isMounted) {
+                    const cachedRole = localStorage.getItem("userRole");
+                    setRole(
+                        cachedRole === "admin" ||
+                        cachedRole === "student"
+                            ? cachedRole
+                            : null
+                    );
+                }
+            } finally {
+                if (isMounted) {
+                    setAuthLoading(false);
+                }
+            }
+        });
+
+        return () => {
+            isMounted = false;
+            unsubscribe();
+        };
     }, []);
+
+    // Preserve the requested route while authentication is initializing.
+    if (authLoading) {
+        return (
+            <div
+                style={{
+                    minHeight: "100vh",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "#E0E1DD",
+                    color: "#1B263B",
+                    fontFamily: "Poppins, sans-serif",
+                }}
+            >
+                Loading OyFound...
+            </div>
+        );
+    }
+
+    const isStudent = role === "student";
+    const isAdmin = role === "admin";
+    const isAuthenticated = isStudent || isAdmin;
+
+    // Guest access is preserved for the student-facing pages.
+    const isGuest = role === "guest";
 
     return (
         <>
@@ -82,7 +158,7 @@ function App() {
             )}
 
             {/* ADMIN NAVBAR */}
-            {role === "admin" && (
+            {isAdmin && (
                 <NavAdmin
                     setRole={setRole}
                     searchQuery={searchQuery}
@@ -90,8 +166,8 @@ function App() {
                 />
             )}
 
-            {/* STUDENT NAVBAR */}
-            {(role === "student" || role === "guest") && (
+            {/* STUDENT / GUEST NAVBAR */}
+            {(isStudent || isGuest) && (
                 <NavStudent
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
@@ -105,7 +181,11 @@ function App() {
 
                 <Route
                     path="/login"
-                    element={<Login setRole={setRole} />}
+                    element={
+                        isAuthenticated
+                            ? <Navigate to={isAdmin ? "/admin" : "/student"} replace />
+                            : <Login setRole={setRole} />
+                    }
                 />
 
                 <Route
@@ -118,86 +198,107 @@ function App() {
                     element={<ForgotPassword />}
                 />
 
-                <Route
-                    path="/contact"
-                    element={<Contact />}
-                />
-
-                <Route
-                    path="/about"
-                    element={<About />}
-                />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/about" element={<About />} />
 
                 {/* Admin */}
-                {role === "admin" && (
-                    <>
-                        <Route
-                            path="/admin"
-                            element={
-                                <HomeAdmin
-                                    searchQuery={searchQuery}
-                                />
-                            }
-                        />
+                <Route
+                    path="/admin"
+                    element={
+                        isAdmin
+                            ? <HomeAdmin searchQuery={searchQuery} />
+                            : <Navigate to={isStudent ? "/student" : "/login"} replace />
+                    }
+                />
 
-                        <Route
-                            path="/messages"
-                            element={<Messages />}
-                        />
+                <Route
+                    path="/messages"
+                    element={
+                        isAdmin
+                            ? <Messages />
+                            : <Navigate to={isStudent ? "/student" : "/login"} replace />
+                    }
+                />
 
-                        <Route
-                            path="/dashboard"
-                            element={<Dashboard />}
-                        />
+                <Route
+                    path="/dashboard"
+                    element={
+                        isAdmin
+                            ? <Dashboard />
+                            : <Navigate to={isStudent ? "/student" : "/login"} replace />
+                    }
+                />
 
-                        <Route
-                            path="/report"
-                            element={<ReportItem />}
-                        />
-                    </>
-                )}
+                <Route
+                    path="/report"
+                    element={
+                        isAdmin
+                            ? <ReportItem />
+                            : <Navigate to={isStudent ? "/student" : "/login"} replace />
+                    }
+                />
 
-                {/* Student / Guest */}
-                {(role === "student" || role === "guest") && (
-                    <>
-                        <Route
-                            path="/student"
-                            element={
-                                <HomeStudent
-                                    searchQuery={searchQuery}
-                                />
-                            }
-                        />
+                {/* Student */}
+                <Route
+                    path="/student"
+                    element={
+                        isStudent || isGuest
+                            ? <HomeStudent searchQuery={searchQuery} />
+                            : <Navigate to={isAdmin ? "/admin" : "/login"} replace />
+                    }
+                />
 
-                        <Route
-                            path="/studentdashboard"
-                            element={<StudentDashboard />}
-                        />
+                <Route
+                    path="/studentdashboard"
+                    element={
+                        isStudent || isGuest
+                            ? <StudentDashboard />
+                            : <Navigate to={isAdmin ? "/admin" : "/login"} replace />
+                    }
+                />
 
-                        <Route
-                            path="/studentmessages"
-                            element={<SMessages />}
-                        />
-                    </>
-                )}
+                <Route
+                    path="/studentmessages"
+                    element={
+                        isStudent || isGuest
+                            ? <SMessages />
+                            : <Navigate to={isAdmin ? "/admin" : "/login"} replace />
+                    }
+                />
 
                 {/* Shared authenticated pages */}
-                {role && (
-                    <>
-                        <Route
-                            path="/profile"
-                            element={<Profile setRole={setRole} />}
-                        />
+                <Route
+                    path="/profile"
+                    element={
+                        isAuthenticated
+                            ? <Profile setRole={setRole} />
+                            : <Navigate to="/login" replace />
+                    }
+                />
 
-                        <Route
-                            path="/edit-profile"
-                            element={<EditProfile setRole={setRole} />}
-                        />
-                    </>
-                )}
+                <Route
+                    path="/edit-profile"
+                    element={
+                        isAuthenticated
+                            ? <EditProfile setRole={setRole} />
+                            : <Navigate to="/login" replace />
+                    }
+                />
 
-                {/* Fallback */}
-                <Route path="*" element={<Home />} />
+                {/* Fallback: preserve access to known route groups */}
+                <Route
+                    path="*"
+                    element={
+                        location.pathname.startsWith("/admin") ||
+                        location.pathname === "/messages" ||
+                        location.pathname === "/dashboard" ||
+                        location.pathname === "/report"
+                            ? <Navigate to={isAdmin ? "/admin" : "/login"} replace />
+                            : location.pathname.startsWith("/student")
+                                ? <Navigate to={isStudent || isGuest ? "/student" : "/login"} replace />
+                                : <Navigate to="/" replace />
+                    }
+                />
             </Routes>
 
             {/* CONTACT POPUP */}
