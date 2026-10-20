@@ -1,5 +1,5 @@
 /* =========================================================
-   OYBOT FLOATING AI SUPPORT STYLES (WHITE THEME)
+   OYBOT FLOATING AI SUPPORT STYLES (WHITE THEME - RESPONSIVE)
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
@@ -70,6 +70,7 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  outline: none;
 }
 
 .oybot-toggle-btn:hover {
@@ -82,6 +83,8 @@
 .oybot-modal {
   width: 350px;
   height: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 90px);
   background-color: var(--oybot-white);
   border-radius: 16px;
   box-shadow: 0 12px 36px var(--oybot-shadow-dark), 0 2px 8px var(--oybot-shadow-light);
@@ -111,16 +114,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .oybot-header-info {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .oybot-avatar-icon {
   font-size: 20px;
+  flex-shrink: 0;
+}
+
+.oybot-title-stack {
+  min-width: 0;
 }
 
 .oybot-title-stack h4 {
@@ -128,12 +138,16 @@
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--oybot-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .oybot-status-online {
   font-size: 0.7rem;
   color: var(--oybot-status-green);
   font-weight: 500;
+  display: block;
 }
 
 .oybot-close-btn {
@@ -143,7 +157,9 @@
   font-size: 18px;
   cursor: pointer;
   opacity: 0.8;
+  padding: 4px;
   transition: color 0.2s ease, opacity 0.2s ease;
+  flex-shrink: 0;
 }
 
 .oybot-close-btn:hover {
@@ -222,6 +238,8 @@
   background-color: var(--oybot-white);
   display: flex;
   gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .oybot-input {
@@ -234,6 +252,7 @@
   font-size: 0.82rem;
   outline: none;
   transition: border-color 0.2s ease, background-color 0.2s ease;
+  min-width: 0;
 }
 
 .oybot-input::placeholder {
@@ -259,6 +278,7 @@
   justify-content: center;
   font-size: 14px;
   transition: background-color 0.2s ease, transform 0.1s ease;
+  flex-shrink: 0;
 }
 
 .oybot-send-btn:hover {
@@ -309,4 +329,61 @@
   border: 1px solid var(--oybot-border-subtle);
   border-radius: 8px;
   padding: 4px;
+  max-width: 100%;
+}
+
+/* =========================================================
+   RESPONSIVE MOBILE BREAKPOINTS
+   ========================================================= */
+@media (max-width: 576px) {
+  .oybot-wrapper {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .oybot-toggle-btn {
+    width: 54px;
+    height: 54px;
+    font-size: 22px;
+  }
+
+  .oybot-modal {
+    width: calc(100vw - 32px);
+    height: 440px;
+    bottom: 0;
+  }
+
+  .oybot-msg-row {
+    max-width: 88%;
+  }
+
+  .oybot-bubble {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .oybot-wrapper {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .oybot-modal {
+    width: calc(100vw - 24px);
+    height: 420px;
+  }
+
+  .oybot-header {
+    padding: 12px 14px;
+  }
+
+  .oybot-body {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .oybot-footer {
+    padding: 8px 10px;
+  }
 }
