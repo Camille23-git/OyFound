@@ -2,9 +2,9 @@
   box-sizing: border-box;
 }
 
-/* =========================================
-   MAIN PAGE
-========================================= */
+/* =========================================================
+   RESET & BASE STYLES
+========================================================= */
 
 html,
 body,
@@ -18,45 +18,54 @@ body,
   overflow-y: auto !important;
 }
 
+button {
+  font-family: inherit;
+  text-align: center;
+}
+
+/* =========================================================
+   MAIN PAGE CONTAINER (MATCHING HOME.CSS PALETTE)
+========================================================= */
+
 .auth-page {
   position: relative !important;
   width: 100% !important;
   min-height: 100vh !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: space-between !important;
   align-items: center !important;
+  justify-content: space-between !important;
   padding: 0 !important;
   overflow-x: hidden !important;
   background: linear-gradient(
     112deg,
-    #b5d5e7 0%,
-    #a7c8da 25%,
-    #99bccc 50%,
-    #8bb0bf 75%,
-    #7fa1b0 100%
+    #b5d5e7 0%,   /* Lightest sky blue */
+    #a7c8da 25%,  /* Mid-light blue */
+    #99bccc 50%,  /* Middle slate blue */
+    #8bb0bf 75%,  /* Mid-dark slate blue */
+    #7fa1b0 100%  /* Dark slate blue */
   ) !important;
+  perspective: 1200px !important;
 }
 
-/* =========================================
-   BACKGROUND GLOW
-========================================= */
+/* =========================================================
+   BACKGROUND GLOW (MATCHING HOME.CSS)
+========================================================= */
 
 .auth-background {
   position: absolute !important;
   inset: 0 !important;
-  overflow: hidden !important;
   pointer-events: none !important;
   z-index: 1 !important;
   background:
     radial-gradient(
-      circle at 28% 35%,
-      rgba(255, 255, 255, 0.35) 0%,
+      circle at 25% 30%,
+      rgba(255, 255, 255, 0.45) 0%,
       transparent 45%
     ),
     radial-gradient(
-      circle at 72% 65%,
-      rgba(255, 255, 255, 0.25) 0%,
+      circle at 75% 70%,
+      rgba(255, 255, 255, 0.3) 0%,
       transparent 50%
     ) !important;
 }
@@ -68,34 +77,51 @@ body,
   display: none !important;
 }
 
-/* =========================================
-   AUTH CARD (CENTERED VERTICALLY)
-========================================= */
+/* =========================================================
+   ENTRANCE KEYFRAME
+========================================================= */
+
+@keyframes authCardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(35px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   AUTH CARD
+========================================================= */
 
 .auth-card {
   position: relative !important;
   z-index: 20 !important;
   width: min(920px, 92%) !important;
-  max-height: 84vh !important;
+  max-height: 85vh !important;
   margin: auto !important; /* Centers card vertically and horizontally */
   display: flex !important;
   overflow: hidden !important;
-  border-radius: 24px !important;
-  border: 1px solid rgba(255, 255, 255, 0.65) !important;
-  background: rgba(255, 255, 255, 0.35) !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  background: rgba(255, 255, 255, 0.38) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 15px 35px rgba(6, 36, 56, 0.12) !important;
-  animation: authAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 
+    0 20px 40px rgba(10, 35, 55, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  transition: transform 0.4s ease, box-shadow 0.4s ease !important;
 }
 
 .register-card {
   flex-direction: row !important;
 }
 
-/* =========================================
+/* =========================================================
    FORM PANEL (LEFT)
-========================================= */
+========================================================= */
 
 .register-form-panel {
   width: 62% !important;
@@ -116,13 +142,14 @@ body,
   margin: 0 0 16px !important;
   color: #062438 !important;
   text-align: center !important;
-  font-size: 26px !important;
-  font-weight: 800 !important;
+  font-size: 28px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px !important;
 }
 
-/* =========================================
+/* =========================================================
    WELCOME PANEL (RIGHT)
-========================================= */
+========================================================= */
 
 .register-form-panel + .welcome-panel {
   width: 38% !important;
@@ -135,14 +162,14 @@ body,
   background: linear-gradient(
     145deg,
     #062438 0%,
-    #18415d 50%,
+    #062438 50%,
     #1e4560 100%
   ) !important;
 }
 
-/* =========================================
+/* =========================================================
    INPUTS & SELECTS
-========================================= */
+========================================================= */
 
 .register-grid input,
 .register-grid select,
@@ -171,9 +198,9 @@ body,
   color: #7fa1b0 !important;
 }
 
-/* =========================================
+/* =========================================================
    REGISTER GRID
-========================================= */
+========================================================= */
 
 .register-grid {
   display: grid !important;
@@ -189,25 +216,9 @@ body,
   grid-column: 1 / -1 !important;
 }
 
-/* =========================================
-   CHILDREN & HEADINGS
-========================================= */
-
-.register-grid h3 {
-  margin: 8px 0 4px !important;
-  color: #062438 !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  text-align: left !important;
-}
-
-.children-row {
-  display: contents !important;
-}
-
-/* =========================================
+/* =========================================================
    BIRTHDATE
-========================================= */
+========================================================= */
 
 .birthdate-field {
   grid-column: 1 / -1 !important;
@@ -228,36 +239,41 @@ body,
   gap: 8px !important;
 }
 
-/* =========================================
-   SUBMIT BUTTON
-========================================= */
+/* =========================================================
+   SUBMIT BUTTON (MATCHING HOME.CSS .GET-STARTED-BUTTON)
+========================================================= */
 
 .register-submit {
   width: 100% !important;
-  height: 44px !important;
+  height: 46px !important;
   margin-top: 18px !important;
-  border: none !important;
-  border-radius: 22px !important;
+  border: 2px solid rgba(255, 255, 255, 0.9) !important;
+  border-radius: 23px !important;
   background: #062438 !important;
   color: #ffffff !important;
   font-family: "Poppins", sans-serif !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
   letter-spacing: 1px !important;
   cursor: pointer !important;
-  box-shadow: 0 6px 16px rgba(6, 36, 56, 0.2) !important;
-  transition: all 0.2s ease !important;
+  box-shadow: 0 8px 20px rgba(6, 36, 56, 0.25) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease !important;
 }
 
 .register-submit:hover {
   transform: translateY(-2px) !important;
   background: #18415d !important;
-  box-shadow: 0 8px 20px rgba(6, 36, 56, 0.28) !important;
+  box-shadow: 0 12px 28px rgba(6, 36, 56, 0.35) !important;
 }
 
-/* =========================================
+.register-submit:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 4px 12px rgba(6, 36, 56, 0.2) !important;
+}
+
+/* =========================================================
    RESPONSIVE
-========================================= */
+========================================================= */
 
 @media (max-width: 800px) {
   .auth-card,
