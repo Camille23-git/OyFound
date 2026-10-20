@@ -1,5 +1,8 @@
+
 import {
   GoogleAuthProvider,
+  browserLocalPersistence,
+  setPersistence,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -72,14 +75,12 @@ function Login({ setRole }) {
   const goToRegister = () => {
     setError("");
     setSuccess("");
-
     navigate("/register");
   };
 
   const goHome = () => {
     setError("");
     setSuccess("");
-
     navigate("/");
   };
 
@@ -176,7 +177,6 @@ function Login({ setRole }) {
       return null;
     } catch (err) {
       console.error("Error finding user role:", err);
-
       return null;
     }
   };
@@ -226,12 +226,11 @@ function Login({ setRole }) {
 
       console.log("Signing in:", email);
 
-      const userCredential =
-        await signInWithEmailAndPassword(
-          auth,
-          email,
-          loginPassword
-        );
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        loginPassword
+      );
 
       const user = userCredential.user;
 
@@ -242,10 +241,7 @@ function Login({ setRole }) {
         return;
       }
 
-      console.log(
-        "Firebase login successful:",
-        user.uid
-      );
+      console.log("Firebase login successful:", user.uid);
 
       const userRole = await getUserRole(user);
 
@@ -293,10 +289,12 @@ function Login({ setRole }) {
   };
 
   /* =========================================
-      GOOGLE LOGIN
+      GOOGLE LOGIN - UPDATED
   ========================================= */
 
   const loginWithGoogle = async () => {
+    if (loading) return;
+
     setError("");
     setSuccess("");
     setLoading(true);
@@ -308,8 +306,11 @@ function Login({ setRole }) {
         prompt: "select_account",
       });
 
-      const result = await signInWithPopup(auth, provider);
+      // Set Firebase authentication persistence.
+      await setPersistence(auth, browserLocalPersistence);
 
+      // Continue using popup authentication.
+      const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
       if (!user) {
@@ -319,16 +320,13 @@ function Login({ setRole }) {
         return;
       }
 
-      console.log(
-        "Google login successful:",
-        user.uid
-      );
+      console.log("Google login successful:", user.uid);
 
       const userRole = await getUserRole(user);
 
       if (!userRole) {
         setError(
-          "Google sign-in worked, but this Google account is not registered in OyFound."
+          "Google sign-in succeeded, but this account is not registered in OyFound or its user role could not be found. Please contact the administrator."
         );
         return;
       }
@@ -344,19 +342,19 @@ function Login({ setRole }) {
 
         case "auth/popup-blocked":
           setError(
-            "Your browser blocked the Google sign-in popup. Please allow popups for this website and try again."
+            "Your browser blocked the Google sign-in popup. Please open OyFound in your browser and allow popups."
           );
           break;
 
         case "auth/unauthorized-domain":
           setError(
-            "This website domain is not authorized for Google sign-in. Add your Vercel domain in Firebase Authentication > Settings > Authorized domains."
+            "This website domain is not authorized for Google sign-in. Check Firebase Authentication > Settings > Authorized domains."
           );
           break;
 
         case "auth/operation-not-allowed":
           setError(
-            "Google sign-in is not enabled. Enable Google under Firebase Authentication > Sign-in method."
+            "Google sign-in is not enabled in Firebase Authentication."
           );
           break;
 
@@ -369,6 +367,12 @@ function Login({ setRole }) {
         case "auth/network-request-failed":
           setError(
             "Network error while connecting to Google. Check your internet connection and try again."
+          );
+          break;
+
+        case "auth/web-storage-unsupported":
+          setError(
+            "Your browser does not support the storage needed for sign-in. Open OyFound in Safari or Chrome and enable website data."
           );
           break;
 
@@ -399,10 +403,7 @@ function Login({ setRole }) {
     setSuccess("");
 
     try {
-      await sendPasswordResetEmail(
-        auth,
-        loginEmail.trim()
-      );
+      await sendPasswordResetEmail(auth, loginEmail.trim());
 
       setSuccess(
         "Password reset email sent. Please check your inbox."
@@ -413,15 +414,13 @@ function Login({ setRole }) {
       if (err.code === "auth/user-not-found") {
         setError("No account was found with this email.");
       } else {
-        setError(
-          "Unable to send password reset email."
-        );
+        setError("Unable to send password reset email.");
       }
     }
   };
 
   /* =========================================
-      LOGIN UI
+      LOGIN UI - UNCHANGED
   ========================================= */
 
   return (
@@ -435,9 +434,7 @@ function Login({ setRole }) {
 
       {/* LOGIN CARD */}
       <div className="auth-card login-card">
-        {/* =================================
-            WELCOME PANEL
-        ================================= */}
+        {/* WELCOME PANEL */}
         <div className="welcome-panel">
           <div className="welcome-panel-content">
             <div className="welcome-eyebrow">OYFOUND</div>
@@ -450,7 +447,9 @@ function Login({ setRole }) {
 
             <div className="welcome-divider"></div>
 
-            <p className="welcome-small-text">Don't have an account?</p>
+            <p className="welcome-small-text">
+              Don't have an account?
+            </p>
 
             <button
               type="button"
@@ -462,14 +461,14 @@ function Login({ setRole }) {
           </div>
         </div>
 
-        {/* =================================
-            FORM PANEL
-        ================================= */}
+        {/* FORM PANEL */}
         <div className="form-panel">
           <div className="form-wrapper">
             <h2>Login</h2>
 
-            <p className="form-subtitle">Login to continue to OyFound</p>
+            <p className="form-subtitle">
+              Login to continue to OyFound
+            </p>
 
             {location.state?.registered && (
               <div className="auth-success">
@@ -479,7 +478,9 @@ function Login({ setRole }) {
 
             {error && <div className="auth-error">{error}</div>}
 
-            {success && <div className="auth-success">{success}</div>}
+            {success && (
+              <div className="auth-success">{success}</div>
+            )}
 
             <form onSubmit={handleLogin}>
               {/* EMAIL */}
@@ -497,6 +498,7 @@ function Login({ setRole }) {
               {/* PASSWORD */}
               <div className="form-input-group">
                 <label>Password</label>
+
                 <div style={{ position: "relative" }}>
                   <input
                     type={showPassword ? "text" : "password"}
@@ -505,17 +507,20 @@ function Login({ setRole }) {
                     onChange={(e) => setLoginPassword(e.target.value)}
                     required
                   />
+
                   <button
                     type="button"
                     onMouseEnter={(e) => {
                       setShowPassword(true);
                       e.currentTarget.style.color = "#062438";
-                      e.currentTarget.style.backgroundColor = "rgba(6, 36, 56, 0.08)";
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(6, 36, 56, 0.08)";
                     }}
                     onMouseLeave={(e) => {
                       setShowPassword(false);
                       e.currentTarget.style.color = "#6b7280";
-                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.backgroundColor =
+                        "transparent";
                     }}
                     style={{
                       position: "absolute",
@@ -531,17 +536,24 @@ function Login({ setRole }) {
                       justifyContent: "center",
                       padding: "6px",
                       borderRadius: "50%",
-                      transition: "all 0.2s ease"
+                      transition: "all 0.2s ease",
                     }}
                   >
-                    {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
+                    {showPassword ? (
+                      <Eye size={18} />
+                    ) : (
+                      <EyeClosed size={18} />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* FORGOT PASSWORD */}
               <div className="forgot-row">
-                <button type="button" onClick={handleForgotPassword}>
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                >
                   Forgot your password?
                 </button>
               </div>
@@ -575,6 +587,7 @@ function Login({ setRole }) {
                 alt="Google Icon"
                 className="google-icon"
               />
+
               <span>Continue with Google</span>
             </button>
           </div>
