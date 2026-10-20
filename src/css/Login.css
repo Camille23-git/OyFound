@@ -27,6 +27,10 @@ button {
    MAIN PAGE CONTAINER & PERSPECTIVE ENVIRONMENT
 ========================================================= */
 
+/* =========================================================
+   LOGIN & REGISTER AUTH PAGE CONTAINER (LOW-CONTRAST)
+========================================================= */
+
 .auth-page {
   position: relative !important;
   width: 100% !important;
@@ -37,14 +41,17 @@ button {
   justify-content: space-between !important;
   padding: 0 !important;
   overflow-x: hidden !important;
+  
+  /* Soft, low-contrast background gradient matching Home.css */
   background: linear-gradient(
     112deg,
-    #b5d5e7 0%,   /* Lightest sky blue */
-    #a7c8da 25%,  /* Mid-light blue */
-    #99bccc 50%,  /* Middle slate blue */
-    #8bb0bf 75%,  /* Mid-dark slate blue */
-    #7fa1b0 100%  /* Dark slate blue */
+    #cadde8 0%,   /* Soft pastel sky blue */
+    #c3d8e5 25%,  /* Muted pale blue */
+    #bcd3e1 50%,  /* Neutral soft blue */
+    #b5cddc 75%,  /* Subtle slate tint */
+    #aec8d8 100%  /* Soft low-contrast end blue */
   ) !important;
+  
   perspective: 1200px !important;
 }
 

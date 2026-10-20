@@ -426,14 +426,14 @@ function Login({ setRole }) {
 
   return (
     <div className="auth-page">
-      {/* BACKGROUND */}
+      {/* BACKGROUND ORBS */}
       <div className="auth-background">
         <div className="auth-orb auth-orb-one"></div>
         <div className="auth-orb auth-orb-two"></div>
         <div className="auth-orb auth-orb-three"></div>
       </div>
 
-      {/* LOGIN CONTAINER */}
+      {/* LOGIN CARD */}
       <div className="auth-card login-card">
         {/* =================================
             WELCOME PANEL
@@ -546,7 +546,7 @@ function Login({ setRole }) {
                 </button>
               </div>
 
-              {/* LOGIN */}
+              {/* LOGIN BUTTON */}
               <button
                 type="submit"
                 className="primary-form-button"
@@ -556,14 +556,14 @@ function Login({ setRole }) {
               </button>
             </form>
 
-            {/* OR */}
+            {/* OR DIVIDER */}
             <div className="or-divider">
               <span></span>
               <p>OR</p>
               <span></span>
             </div>
 
-            {/* GOOGLE */}
+            {/* GOOGLE BUTTON */}
             <button
               type="button"
               className="google-button"

@@ -350,7 +350,6 @@ function Messages() {
                 itemName = reportData?.itemName || reportData?.title || "Item";
                 
                 if (newStatus === "approved") {
-                    // Automatically transfer the report to claimed_reports and delete it from reports
                     const batch = writeBatch(db);
                     const claimedRef = doc(db, "claimed_reports", targetItemId);
 
@@ -485,12 +484,12 @@ function Messages() {
             });
 
             await updateDoc(doc(db, "messages", selectedChat.id), {
-            status: "active",
-            message: messagePreviewText,
-            lastSenderRole: 'admin',
-            lastSender: 'admin',
-            timestamp: serverTimestamp(),
-            unread: false,
+                status: "active",
+                message: messagePreviewText,
+                lastSenderRole: 'admin',
+                lastSender: 'admin',
+                timestamp: serverTimestamp(),
+                unread: false,
             });
 
             setReplyText("");
@@ -503,7 +502,6 @@ function Messages() {
         }
     };
 
-    /* FIXED PREVIEW FUNCTION TO ACCURATELY CHECK SENDER ROLE */
     const renderConvoPreview = (chat) => {
         if (!chat || !chat.message) return "";
         const text = chat.message;

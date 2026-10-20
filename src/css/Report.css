@@ -4,7 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 /* ==========================================
-   PAGE CANVAS & SLATE BLUE GRADIENT BACKGROUND
+   PAGE CANVAS & LOW-CONTRAST GRADIENT BACKGROUND
    ========================================== */
 .report-page-container {
     display: flex;
@@ -14,11 +14,11 @@
     min-height: calc(100vh - 70px);
     background: linear-gradient(
         112deg,
-        #b5d5e7 0%,   /* Lightest sky blue */
-        #a7c8da 25%,  /* Mid-light blue */
-        #99bccc 50%,  /* Middle slate blue */
-        #8bb0bf 75%,  /* Mid-dark slate blue */
-        #7fa1b0 100%  /* Dark slate blue */
+        #cadde8 0%,   /* Soft pastel sky blue */
+        #c3d8e5 25%,  /* Muted pale blue */
+        #bcd3e1 50%,  /* Neutral soft blue */
+        #b5cddc 75%,  /* Subtle slate tint */
+        #aec8d8 100%  /* Soft low-contrast end blue */
     );
     background-attachment: fixed;
     color: #062438;
@@ -30,7 +30,6 @@
     position: relative;
     width: 100%;
 }
-
 /* ==========================================
    THE FLOATING GLASS PANEL
    ========================================== */

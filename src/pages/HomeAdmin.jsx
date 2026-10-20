@@ -100,16 +100,28 @@ function HomeAdmin() {
             querySnapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const status = (data.status || "").toLowerCase();
+                const hasPicture = Boolean(data.imageUrl && data.imageUrl.trim() !== "");
 
-                // Exclude items that have already been approved or claimed
+                // 1. Exclude items that are approved or claimed
                 if (status !== "approved" && status !== "claimed") {
-                    reportsArr.push({ ...data, id: docSnap.id });
+                    
+                    // 2. Lost items MUST have a picture to be displayed
+                    if (status === "lost") {
+                        if (hasPicture) {
+                            reportsArr.push({ ...data, id: docSnap.id });
+                        }
+                    } 
+                    // 3. Found (or Unclaimed) items can be displayed with OR without a picture
+                    else {
+                        reportsArr.push({ ...data, id: docSnap.id });
+                    }
                 }
             });
             setReports(reportsArr);
         });
         return () => unsubscribe();
     }, []);
+
     const handleOpenEditModal = (report) => {
         setEditingReport(report);
         setEditFormData({
@@ -318,20 +330,20 @@ function HomeAdmin() {
                                 const locationDisplay = report.locationName || report.landmark || 'Not specified';
                                 const categoryDisplay = report.category || 'General Items';
                                 const dateTimeDisplay = formatDateTime(report);
+                                const hasPicture = Boolean(report.imageUrl && report.imageUrl.trim() !== "");
 
                                 return (
                                     <div key={report.id} className="admin-card-container">
-                                        <div 
-                                            className="admin-card-left"
-                                            onClick={() => report.imageUrl && setSelectedImg(report.imageUrl)}
-                                            style={{ cursor: report.imageUrl ? 'zoom-in' : 'default' }}
-                                        >
-                                            {report.imageUrl ? (
+                                        {/* Display image container ONLY if an image actually exists */}
+                                        {hasPicture && (
+                                            <div 
+                                                className="admin-card-left"
+                                                onClick={() => setSelectedImg(report.imageUrl)}
+                                                style={{ cursor: 'zoom-in' }}
+                                            >
                                                 <img src={report.imageUrl} alt={report.itemName} className="admin-card-image" />
-                                            ) : (
-                                                <div className="placeholder-box">350 x 250</div>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
                                         
                                         <div className="admin-card-right">
                                             <h3 className="card-item-title" title={report.itemName}>

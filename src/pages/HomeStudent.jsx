@@ -108,10 +108,21 @@ function HomeStudent({ searchQuery }) {
             snap.docs.forEach((docSnap) => {
                 const data = docSnap.data();
                 const status = (data.status || "").toLowerCase();
+                const hasPicture = Boolean(data.imageUrl && data.imageUrl.trim() !== "");
 
                 // Exclude items that are already approved or claimed
                 if (status !== "approved" && status !== "claimed") {
-                    reportsArr.push({ ...data, id: docSnap.id });
+                    
+                    // Lost items MUST have an image to be displayed
+                    if (status === "lost") {
+                        if (hasPicture) {
+                            reportsArr.push({ ...data, id: docSnap.id });
+                        }
+                    } 
+                    // Found (or Unclaimed) items can be displayed with or without an image
+                    else {
+                        reportsArr.push({ ...data, id: docSnap.id });
+                    }
                 }
             });
             setReports(reportsArr);
@@ -389,6 +400,7 @@ function HomeStudent({ searchQuery }) {
                             const globalClaim = allGlobalClaims[item.id];
                             const itemStatus = (item.status || "").toLowerCase();
                             const currentUser = auth.currentUser;
+                            const hasPicture = Boolean(item.imageUrl && item.imageUrl.trim() !== "");
                             
                             const isPendingClaimActive = 
                                 (globalClaim && globalClaim.status === "pending") || 
@@ -408,17 +420,17 @@ function HomeStudent({ searchQuery }) {
 
                             return (
                                 <div key={item.id} className="student-card-container">
-                                    <div className="student-card-left">
-                                        {item.imageUrl ? (
+                                    {/* Display image section ONLY if an image exists */}
+                                    {hasPicture && (
+                                        <div className="student-card-left">
                                             <img 
                                                 src={item.imageUrl} 
                                                 alt={item.itemName} 
                                                 className="student-card-image"
                                             />
-                                        ) : (
-                                            <div className="placeholder-box">350 x 250</div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
+
                                     <div className="student-card-right">
                                         <h3 className="card-item-title" title={item.itemName}>
                                             Item name: {item.itemName}

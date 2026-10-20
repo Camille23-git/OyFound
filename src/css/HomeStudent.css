@@ -11,7 +11,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* --- MAIN CONTAINER & SLATE BLUE GRADIENT BASE --- */
+/* --- MAIN CONTAINER & LOW-CONTRAST GRADIENT BASE --- */
 .student-home {
     min-height: 100vh;
     padding: 60px max(20px, 5vw);
@@ -19,11 +19,11 @@
     color: #062438;
     background: linear-gradient(
         112deg,
-        #b5d5e7 0%,   /* Lightest sky blue */
-        #a7c8da 25%,  /* Mid-light blue */
-        #99bccc 50%,  /* Middle slate blue */
-        #8bb0bf 75%,  /* Mid-dark slate blue */
-        #7fa1b0 100%  /* Dark slate blue */
+        #cadde8 0%,   /* Soft pastel sky blue */
+        #c3d8e5 25%,  /* Muted pale blue */
+        #bcd3e1 50%,  /* Neutral soft blue */
+        #b5cddc 75%,  /* Subtle slate tint */
+        #aec8d8 100%  /* Soft low-contrast end blue */
     );
     background-attachment: fixed;
     display: flex;
@@ -311,7 +311,7 @@
 
 /* Red Pending Admin Button State */
 .claim-btn.pending {
-    background-color: #dc2626 !important;
+    background-color: #af0a0a !important;
     color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
@@ -325,7 +325,7 @@
 /* Neutral Amber/Slate styling when claimed by another user */
 .claim-btn.claimed-other,
 .claim-btn.claimed-other:disabled {
-    background-color: rgba(51, 150, 216, 0.45) !important;
+    background-color: rgba(5, 112, 184, 0.603) !important;
     color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.6) !important;
     opacity: 0.85 !important;

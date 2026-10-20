@@ -41,7 +41,7 @@
 }
 
 /* =========================================================
-   DASHBOARD WRAPPER
+   DASHBOARD WRAPPER (LOW-CONTRAST GRADIENT)
 ========================================================= */
 
 .dashboard-wrapper {
@@ -50,11 +50,11 @@
     padding: 28px 36px;
     background: linear-gradient(
         135deg,
-        #b5d5e7 0%,
-        #a7c8da 25%,
-        #99bccc 50%,
-        #8bb0bf 75%,
-        #7fa1b0 100%
+        #cadde8 0%,   /* Soft pastel sky blue */
+        #c3d8e5 25%,  /* Muted pale blue */
+        #bcd3e1 50%,  /* Neutral soft blue */
+        #b5cddc 75%,  /* Subtle slate tint */
+        #aec8d8 100%  /* Soft low-contrast end blue */
     );
     color: #062438;
 }

@@ -23,7 +23,6 @@ import Footer from "./Footer";
 
 import "../css/Register.css";
 
-
 function Register() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -68,13 +67,11 @@ function Register() {
     role: "",
   });
 
-
   /* =====================================================
       OAUTH DATA
   ===================================================== */
 
   const oauthData = location.state || null;
-
 
   /* =====================================================
       DATE OPTIONS
@@ -107,7 +104,6 @@ function Register() {
     (_, index) => index + 1
   );
 
-
   /* =====================================================
       HELPERS
   ===================================================== */
@@ -117,7 +113,6 @@ function Register() {
 
   const isElementaryStudent =
     isStudent && formData.department === "Elementary";
-
 
   /* =====================================================
       OAUTH PREFILL
@@ -140,7 +135,6 @@ function Register() {
     }));
   }, [oauthData]);
 
-
   /* =====================================================
       CLEAR MESSAGES WHEN PAGE CHANGES
   ===================================================== */
@@ -149,7 +143,6 @@ function Register() {
     setError("");
     setSuccess("");
   }, [location.pathname]);
-
 
   /* =====================================================
       NAVIGATION
@@ -166,7 +159,6 @@ function Register() {
     setSuccess("");
     navigate("/");
   };
-
 
   /* =====================================================
       INPUT HANDLER
@@ -198,7 +190,6 @@ function Register() {
     setSuccess("");
   };
 
-
   /* =====================================================
       BIRTHDATE
   ===================================================== */
@@ -218,7 +209,6 @@ function Register() {
       `${String(formData.birthDay).padStart(2, "0")}`
     );
   };
-
 
   /* =====================================================
       ROLE-SPECIFIC DATA
@@ -266,7 +256,6 @@ function Register() {
       return studentData;
     }
 
-
     /* ---------------- ADMIN ---------------- */
 
     if (isAdmin) {
@@ -277,10 +266,8 @@ function Register() {
       };
     }
 
-
     return {};
   };
-
 
   /* =====================================================
       CHECK ADMIN LIMIT
@@ -297,7 +284,6 @@ function Register() {
     return adminSnapshot.size < 10;
   };
 
-
   /* =====================================================
       VALIDATION
   ===================================================== */
@@ -307,7 +293,6 @@ function Register() {
       setError("Please select a role first.");
       return false;
     }
-
 
     /* ---------------- NAME ---------------- */
 
@@ -321,7 +306,6 @@ function Register() {
       return false;
     }
 
-
     /* ---------------- BIRTHDATE ---------------- */
 
     if (
@@ -332,7 +316,6 @@ function Register() {
       setError("Please complete your birthdate.");
       return false;
     }
-
 
     /* ---------------- EMAIL/PASSWORD ---------------- */
 
@@ -358,7 +341,6 @@ function Register() {
       }
     }
 
-
     /* ---------------- ADMIN ---------------- */
 
     if (isAdmin) {
@@ -367,7 +349,6 @@ function Register() {
         return false;
       }
     }
-
 
     /* ---------------- STUDENT ---------------- */
 
@@ -381,7 +362,6 @@ function Register() {
         setError("Please select your department.");
         return false;
       }
-
 
       /* COLLEGE */
 
@@ -402,7 +382,6 @@ function Register() {
         }
       }
 
-
       /* SENIOR HIGH */
 
       if (
@@ -415,7 +394,6 @@ function Register() {
         return false;
       }
 
-
       /* JUNIOR HIGH */
 
       if (
@@ -425,7 +403,6 @@ function Register() {
         setError("Please select your grade level.");
         return false;
       }
-
 
       /* ELEMENTARY */
 
@@ -440,7 +417,6 @@ function Register() {
 
     return true;
   };
-
 
   /* =====================================================
       CREATE FIRESTORE PROFILE
@@ -488,7 +464,6 @@ function Register() {
     return savedData;
   };
 
-
   /* =====================================================
       REGISTRATION HANDLER
   ===================================================== */
@@ -512,7 +487,6 @@ function Register() {
       if (!isValid) {
         return;
       }
-
 
       /* ================================================
           2. OAUTH REGISTRATION
@@ -594,7 +568,6 @@ function Register() {
         return;
       }
 
-
       /* ================================================
           3. NORMAL EMAIL REGISTRATION
       ================================================= */
@@ -614,7 +587,6 @@ function Register() {
           "Firebase Authentication created the account but did not return a valid UID."
         );
       }
-
 
       /* ================================================
           4. CHECK ADMIN LIMIT
@@ -640,13 +612,11 @@ function Register() {
         }
       }
 
-
       /* ================================================
           5. CREATE FIRESTORE PROFILE
       ================================================= */
 
       await createUserProfile(user);
-
 
       /* ================================================
           6. SUCCESS
@@ -744,7 +714,6 @@ function Register() {
     }
   };
 
-
   /* =====================================================
       INPUT COMPONENT
   ===================================================== */
@@ -764,7 +733,6 @@ function Register() {
       required={required}
     />
   );
-
 
   /* =====================================================
       RENDER

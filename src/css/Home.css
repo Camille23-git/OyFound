@@ -44,13 +44,13 @@ button {
     align-items: center;
     justify-content: space-between;
 
-    background: #b5d5e7;
+    background: #c3dbe8;
     perspective: 1200px; /* Enables 3D perspective depth for floating items */
 }
 
 
 /* =========================================================
-   HERO SECTION & PALETTE GRADIENT
+   HERO SECTION & LOW-CONTRAST PALETTE GRADIENT
 ========================================================= */
 
 .home-hero {
@@ -68,19 +68,20 @@ button {
 
     overflow: hidden;
 
+    /* Smoother, low-contrast linear gradient transition */
     background: linear-gradient(
         112deg,
-        #b5d5e7 0%,   /* Lightest sky blue */
-        #a7c8da 25%,  /* Mid-light blue */
-        #99bccc 50%,  /* Middle slate blue */
-        #8bb0bf 75%,  /* Mid-dark slate blue */
-        #7fa1b0 100%  /* Dark slate blue */
+        #cadde8 0%,   /* Soft pastel sky blue */
+        #c3d8e5 25%,  /* Muted pale blue */
+        #bcd3e1 50%,  /* Neutral soft blue */
+        #b5cddc 75%,  /* Subtle slate tint */
+        #aec8d8 100%  /* Soft low-contrast end blue */
     );
 }
 
 
 /* =========================================================
-   BACKGROUND GLOW
+   BACKGROUND GLOW (MUTED AMBIENT OVERLAYS)
 ========================================================= */
 
 .hero-background {
@@ -90,16 +91,17 @@ button {
 
     pointer-events: none;
 
+    /* Lowered opacity radial highlights for gentle contrast */
     background:
         radial-gradient(
             circle at 25% 30%,
-            rgba(255, 255, 255, 0.45) 0%,
-            transparent 45%
+            rgba(255, 255, 255, 0.28) 0%,
+            transparent 50%
         ),
         radial-gradient(
             circle at 75% 70%,
-            rgba(255, 255, 255, 0.3) 0%,
-            transparent 50%
+            rgba(255, 255, 255, 0.18) 0%,
+            transparent 55%
         );
 }
 

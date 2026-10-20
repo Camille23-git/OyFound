@@ -96,6 +96,12 @@ function ReportItem() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // 1. Validation for Lost Items: Picture is strictly required
+        if (itemStatus === 'Lost' && !selectedFile) {
+            alert("Please attach an image. An image is required when reporting a Lost item.");
+            return;
+        }
+
         setIsUploading(true); 
         
         try {
@@ -245,7 +251,9 @@ function ReportItem() {
                             </div>
 
                             <div className="input-block">
-                                <label htmlFor="file-input">Attach Image</label>
+                                <label htmlFor="file-input">
+                                    Attach Image {itemStatus === 'Lost' ? '(Required)' : '(Optional)'}
+                                </label>
                                 <div className="file-upload-wrapper">
                                     <input 
                                         type="file" 
@@ -253,6 +261,7 @@ function ReportItem() {
                                         ref={fileInputRef} 
                                         onChange={handleFileChange} 
                                         accept="image/*" 
+                                        required={itemStatus === 'Lost'}
                                         disabled={isUploading}
                                     />
                                 </div>
