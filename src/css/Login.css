@@ -184,7 +184,7 @@ button {
   font-weight: 900 !important;
   line-height: 1.15 !important;
   letter-spacing: -1px !important;
-  text-transform: uppercase !important;
+  text-transform: none !important;
 }
 
 .welcome-panel p {
