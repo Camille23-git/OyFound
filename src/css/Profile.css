@@ -14,7 +14,7 @@
 
 .profile-dashboard-layout {
     min-height: 100vh;
-    background: linear-gradient(135deg, #b5d5e7 0%, #a7c8da 25%, #99bccc 50%, #8bb0bf 75%, #7fa1b0 100%);
+     background: linear-gradient(135deg, #cadde8 0%, #c3d8e5 25%, #bcd3e1 50%, #b5cddc 75%, #aec8d8 100%);
     background-attachment: fixed;
     padding: 40px 24px 60px;
     font-family: 'Poppins', sans-serif;
