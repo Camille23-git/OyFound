@@ -238,6 +238,8 @@
     color: #b5d5e7;
     text-decoration: none;
     transition: background-color 0.2s ease;
+    touch-action: pan-y;
+    will-change: transform, opacity;
 }
 
 .nav-student-notification-item:hover {
@@ -270,6 +272,13 @@
     min-width: 0;
 }
 
+.nav-student-notification-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 2px;
+}
+
 .nav-student-notification-text {
     font-size: 0.78rem;
     margin: 0;
@@ -278,11 +287,24 @@
     word-break: break-word;
 }
 
+.nav-student-notification-count {
+    display: block;
+    font-size: 0.72rem;
+    color: #99bccc;
+}
+
 .nav-student-notification-time {
     display: block;
     font-size: 0.65rem;
     color: #99bccc;
     margin-top: 4px;
+}
+
+.nav-student-notification-empty {
+    padding: 20px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #99bccc;
 }
 
 .nav-student-notification-footer {
@@ -816,5 +838,31 @@
         right: 15px;
         width: auto;
         max-width: none;
+    }
+
+    /* Responsive adjustments for notification list on small mobile screens */
+    .nav-student-notification-dropdown {
+        position: fixed;
+        top: 65px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: calc(100vw - 20px);
+        max-height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-student-notification-list {
+        max-height: none;
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-student-notification-item {
+        position: relative;
+        user-select: none;
+        -webkit-user-select: none;
     }
 }

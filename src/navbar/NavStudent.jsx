@@ -17,6 +17,98 @@ import { auth, db } from "../firebase";
 
 const DEFAULT_ICON = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
+// Sub-component for individual notification item supporting mobile swipe-to-dismiss
+function NotificationItem({ item, onDelete, user }) {
+    const [translateX, setTranslateX] = useState(0);
+    const [isSwiping, setIsSwiping] = useState(false);
+    const touchStartX = useRef(0);
+
+    const handleTouchStart = (e) => {
+        if (window.innerWidth > 576) return;
+        touchStartX.current = e.touches[0].clientX;
+        setIsSwiping(true);
+    };
+
+    const handleTouchMove = (e) => {
+        if (!isSwiping || window.innerWidth > 576) return;
+        const currentX = e.touches[0].clientX;
+        const diffX = currentX - touchStartX.current;
+        setTranslateX(diffX);
+    };
+
+    const handleTouchEnd = (e) => {
+        if (!isSwiping || window.innerWidth > 576) return;
+        setIsSwiping(false);
+
+        // Swipe threshold of 80px to dismiss
+        if (Math.abs(translateX) > 80) {
+            onDelete(e, item.id);
+        } else {
+            setTranslateX(0);
+        }
+    };
+
+    return (
+        <div
+            className={`nav-student-notification-item ${!item.isRead ? "unread" : ""}`}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                transform: `translateX(${translateX}px)`,
+                opacity: 1 - Math.abs(translateX) / 250,
+                transition: isSwiping ? 'none' : 'transform 0.2s ease-out, opacity 0.2s ease-out'
+            }}
+        >
+            <div>
+                <div className="nav-student-notification-title">
+                    Claim {item.status === "approved" ? "Approved" : "Rejected"}
+                </div>
+                <div className="nav-student-notification-text">
+                    Your claim for "{item.itemName}" was {item.status}.
+                </div>
+            </div>
+            <button
+                type="button"
+                onClick={(e) => onDelete(e, item.id)}
+                style={{
+                    border: 'none',
+                    background: 'none',
+                    color: '#dc3545',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '4px',
+                    borderRadius: '4px',
+                    transition: 'background-color 0.2s'
+                }}
+                title="Dismiss notification"
+            >
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    <line x1="10" y1="11" x2="10" y2="17" />
+                    <line x1="14" y1="11" x2="14" y2="17" />
+                </svg>
+            </button>
+        </div>
+    );
+}
+
 export default function NavStudent({ searchQuery = "", setSearchQuery = () => {} }) {
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
@@ -138,8 +230,10 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
     };
 
     const handleDeleteNotif = async (e, notifId) => {
-        e.stopPropagation();
-        e.preventDefault();
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
         if (!user?.uid || !notifId) return;
 
         setNotifications((prev) => prev.filter((item) => item.id !== notifId));
@@ -271,46 +365,12 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
                                             <div className="nav-student-notification-empty">No claim updates yet.</div>
                                         ) : (
                                             notifications.map((item) => (
-                                                <div key={item.id} className={`nav-student-notification-item ${!item.isRead ? "unread" : ""}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                    <div>
-                                                        <div className="nav-student-notification-title">Claim {item.status === "approved" ? "Approved" : "Rejected"}</div>
-                                                        <div className="nav-student-notification-text">Your claim for "{item.itemName}" was {item.status}.</div>
-                                                    </div>
-                                                    <button 
-                                                        type="button" 
-                                                        onClick={(e) => handleDeleteNotif(e, item.id)} 
-                                                        style={{ 
-                                                            border: 'none', 
-                                                            background: 'none', 
-                                                            color: '#dc3545', 
-                                                            cursor: 'pointer',
-                                                            display: 'inline-flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            padding: '4px',
-                                                            borderRadius: '4px',
-                                                            transition: 'background-color 0.2s'
-                                                        }}
-                                                        title="Dismiss notification"
-                                                    >
-                                                        <svg 
-                                                            width="16" 
-                                                            height="16" 
-                                                            viewBox="0 0 24 24" 
-                                                            fill="none" 
-                                                            stroke="currentColor" 
-                                                            strokeWidth="2" 
-                                                            strokeLinecap="round" 
-                                                            strokeLinejoin="round"
-                                                        >
-                                                            <path d="M3 6h18" />
-                                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                                                            <line x1="10" y1="11" x2="10" y2="17" />
-                                                            <line x1="14" y1="11" x2="14" y2="17" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
+                                                <NotificationItem
+                                                    key={item.id}
+                                                    item={item}
+                                                    onDelete={handleDeleteNotif}
+                                                    user={user}
+                                                />
                                             ))
                                         )}
                                     </div>
