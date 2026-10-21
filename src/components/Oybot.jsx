@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import '../css/Oybot.css';
-import oybotIcon from '../assets/Y.png';
+import oybotIcon from '../assets/y.png';
 
 // Read API Key from environment variables (.env)
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
