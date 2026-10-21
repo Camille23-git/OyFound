@@ -6,14 +6,52 @@
 
 .nav-student-navbar {
     background: #011222 !important;
-    min-height: 70px;
-    padding: 8px 20px;
     font-family: 'Poppins', sans-serif;
     border-bottom: 1px solid rgba(119, 141, 169, 0.2);
 }
 
 .nav-student-container {
     width: 100%;
+}
+
+/* =========================================================
+   DESKTOP STYLING ONLY (MATCHES ADMIN NAVBAR)
+========================================================= */
+
+@media (min-width: 992px) {
+    .nav-student-navbar {
+        height: 68px !important;
+        min-height: 68px !important;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-student-container {
+        margin: 0;
+        padding: 0 40px !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .nav-student-brand {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        height: 100%;
+    }
+
+    .nav-student-brand img,
+    .nav-student-brand svg,
+    .nav-student-brand .nav-student-logo {
+        display: block;
+        height: 52px !important;
+        width: auto;
+        object-fit: contain;
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.4));
+        transition: transform 0.2s ease;
+    }
 }
 
 
@@ -36,13 +74,20 @@
     background-color: transparent;
 }
 
+.nav-student-msg-icon {
+    display: none;
+}
+
+.nav-student-mobile-label {
+    display: none;
+}
+
 /* Hover effect on standard pages */
 .nav-student-messages-link:hover {
     color: #E0E1DD !important;
     background: rgba(65, 90, 119, 0.45) !important;
 }
 
-/* Removes the sticky dark blue active pill when inside /studentmessages page */
 .nav-student-messages-link:active,
 .nav-student-messages-link:focus,
 .nav-student-messages-link.active {
@@ -54,7 +99,6 @@
     outline: none !important;
 }
 
-/* Re-enables the soft square hover pill even when on active state */
 .nav-student-messages-link.active:hover {
     background: rgba(65, 90, 119, 0.45) !important;
 }
@@ -71,20 +115,26 @@
     display: flex;
     align-items: center;
     text-decoration: none;
+    overflow: visible; /* Allows scale without clipping */
 }
 
 .nav-student-brand .nav-student-logo,
 .nav-student-brand img {
     display: block;
-    height: 52px;
+    height: 68px; /* Set base height to match navbar */
     width: auto;
     object-fit: contain;
+
+    /* Scaled up 35% so "Campus Lost & Found System" tagline matches public navbar size */
+    transform: scale(1.35);
+    transform-origin: left center; /* Keeps left edge aligned */
+
     filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.4));
     transition: transform 0.2s ease;
 }
 
 .nav-student-brand img:hover {
-    transform: scale(1.02);
+    transform: scale(1.40); /* Match hover pop effect */
 }
 
 .logo-text-base {
@@ -93,44 +143,94 @@
     letter-spacing: -0.4px;
 }
 
+/* Mobile Responsive adjustment */
+@media (max-width: 600px) {
+    .nav-student-brand .nav-student-logo,
+    .nav-student-brand img {
+        height: 60px;
+        transform: scale(1.25);
+        transform-origin: left center;
+    }
+}
+
 /* =========================================================
    MOBILE NAVBAR TOGGLE
 ========================================================= */
 
 .nav-student-toggler {
-    border-color: #d3d7dd;
+    border-color: rgba(224, 225, 221, 0.3) !important;
+    padding: 6px 10px;
+    border-radius: 8px;
 }
 
 .nav-student-toggler .navbar-toggler-icon {
     filter: invert(1);
 }
 
+.nav-student-toggler:focus {
+    box-shadow: 0 0 0 2px rgba(119, 141, 169, 0.4) !important;
+}
+
 /* =========================================================
-   SEARCH
+   SEARCH BAR (HOMESTUDENT ICE-GLASS THEME)
 ========================================================= */
 
 .nav-student-search-form {
-    max-width: 400px;
+    max-width: 440px;
     width: 100%;
 }
 
+.search-bar-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
 .search-bar {
-    background: #1B263B !important;
-    border: 1px solid #415A77 !important;
-    color: #E0E1DD !important;
-    border-radius: 10px;
-    min-height: 40px;
+    /* Ice-blue translucent tint matching the feed background */
+    background: rgba(192, 214, 228, 0.18) !important;
+    backdrop-filter: blur(14px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+
+    /* Soft ice border highlight */
+    border: 1px solid rgba(192, 214, 228, 0.35) !important;
+    
+    /* Clean light slate-blue text */
+    color: #e0e1dd !important;
+    border-radius: 50px !important;
+    min-height: 38px;
+    height: 38px;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    width: 100%;
+    font-size: 0.88rem;
+    font-weight: 400;
+    
+    /* Inner depth shadow */
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: all 0.25s ease;
 }
 
+/* Ice-blue tinted placeholder text */
 .search-bar::placeholder {
-    color: #778DA9;
+    color: rgba(192, 214, 228, 0.7) !important;
+    font-weight: 400;
 }
 
+/* Glass hover effect */
+.search-bar:hover {
+    background: rgba(192, 214, 228, 0.25) !important;
+    border-color: rgba(192, 214, 228, 0.5) !important;
+}
+
+/* Focus glow matching the light feed theme */
 .search-bar:focus {
-    border-color: #778DA9 !important;
-    box-shadow: 0 0 0 3px rgba(119, 141, 169, 0.15) !important;
+    background: rgba(192, 214, 228, 0.3) !important;
+    border-color: rgba(192, 214, 228, 0.75) !important;
+    box-shadow: 0 0 14px rgba(192, 214, 228, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.2) !important;
+    outline: none !important;
 }
-
 /* =========================================================
    NOTIFICATION AREA (Dark Slate Glass Theme)
 ========================================================= */
@@ -185,11 +285,11 @@
     right: 0;
     width: 340px;
     max-width: calc(100vw - 30px);
-    background: rgba(6, 36, 56, 0.92);
+    background: rgba(6, 36, 56, 0.95);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(181, 213, 231, 0.25);
     border-radius: 14px;
-    box-shadow: 0 12px 35px rgba(6, 36, 56, 0.35);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
     z-index: 1050;
     overflow: hidden;
     font-family: 'Poppins', sans-serif;
@@ -769,24 +869,92 @@
 @media (max-width: 991px) {
     .nav-student-search-form {
         max-width: 100%;
-        margin-top: 10px !important;
-        margin-bottom: 10px !important;
+        margin-top: 14px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .nav-student-menu-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 6px;
+        padding-bottom: 12px;
+    }
+
+    .nav-student-notification-wrapper {
+        width: 100%;
+    }
+
+    .nav-student-notification-btn {
+        width: 100%;
+        border-radius: 10px;
+        justify-content: flex-start;
+        padding: 10px 14px;
+        background: rgba(27, 38, 59, 0.6);
+        border: 1px solid rgba(65, 90, 119, 0.4);
+        color: #E0E1DD;
+    }
+
+    .nav-student-mobile-label {
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .nav-student-notification-badge {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-left: auto;
+    }
+
+    .nav-student-messages-wrapper {
+        width: 100%;
+    }
+
+    .nav-student-messages-link {
+        width: 100%;
+        justify-content: flex-start !important;
+        padding: 10px 14px !important;
+        border-radius: 10px !important;
+        background: rgba(27, 38, 59, 0.6) !important;
+        border: 1px solid rgba(65, 90, 119, 0.4) !important;
+    }
+
+    .nav-student-msg-icon {
+        display: inline-block;
+        margin-right: 10px;
+        color: #b5d5e7;
+    }
+
+    .nav-student-message-badge {
+        margin-left: auto !important;
     }
 
     .nav-student-user-section {
         border-left: none !important;
         border-top: 1px solid rgba(119, 141, 169, 0.2);
-        padding: 12px 0 0 0 !important;
-        margin-top: 8px;
+        padding: 12px 14px 4px 14px !important;
+        margin-top: 4px;
+        margin-left: 0 !important;
+        background: rgba(27, 38, 59, 0.3);
+        border-radius: 10px;
+    }
+
+    .nav-student-profile-link {
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .nav-student-user-name {
         display: inline !important;
+        font-size: 0.92rem;
     }
 
     .nav-student-notification-dropdown {
         position: fixed;
-        top: 70px;
+        top: 75px;
         left: 15px;
         right: 15px;
         width: auto;
@@ -800,13 +968,20 @@
 
 @media (max-width: 576px) {
     .nav-student-navbar {
-        padding: 7px 10px;
+        padding: 8px 14px;
     }
 
     .nav-student-brand .nav-student-logo,
     .nav-student-brand img {
-        height: 42px;
+        height: 40px;
         width: auto;
+    }
+
+    .search-bar {
+        font-size: 0.85rem;
+        min-height: 38px;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
     }
 
     .ai-chat-popup-card {
@@ -840,7 +1015,6 @@
         max-width: none;
     }
 
-    /* Responsive adjustments for notification list on small mobile screens */
     .nav-student-notification-dropdown {
         position: fixed;
         top: 65px;

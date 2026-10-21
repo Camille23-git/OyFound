@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import logoPng from "../assets/OYFD.png"; 
+import logoPng from "../assets/FOUND.png"; 
 import "../css/Navbar.css";
 
 function Navbar({ onContact, onAbout }) {

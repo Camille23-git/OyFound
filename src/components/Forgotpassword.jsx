@@ -1,77 +1,162 @@
-import { sendPasswordResetEmail } from "firebase/auth";
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import emailjs from '@emailjs/browser';
 import { auth } from '../firebase';
+// import '../css/Forgotpassword.css'; // Removed to fix missing file import error
 
-function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+// Replace these with your actual EmailJS credentials
+const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
 
-  const handleResetPassword = async (e) => {
-    e.preventDefault();
-    setError('');
-    setMessage('');
-    setLoading(true);
+function Forgotpassword() {
+    const [email, setEmail] = useState('');
+    const [inputCode, setInputCode] = useState('');
+    const [generatedCode, setGeneratedCode] = useState(null);
+    const [step, setStep] = useState(1); // 1: Enter Email, 2: Enter Code
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+    
+    const navigate = useNavigate();
 
-    try {
-      await sendPasswordResetEmail(auth, email);
-      setMessage("Password reset email sent! Check your inbox for further instructions.");
-      setEmail(''); // Clear input on success
-    } catch (err) {
-      setError("Failed to send password reset email. Please verify your email address.");
-      console.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Step 1: Generate 6-digit OTP code and send via EmailJS / Gmail
+    const handleSendCode = async (e) => {
+        e.preventDefault();
+        setError('');
+        setMessage('');
 
-  return (
-    <div className="register-container">
-      <div className="form-wrapper">
-        <h1 className="form-title">Reset Password</h1>
-        <p style={{ textAlign: 'center', color: '#666', marginBottom: '20px', fontSize: '14px' }}>
-          Enter your email address and we'll send you a link to reset your password.
-        </p>
-        
-        <form className="login-form-container" onSubmit={handleResetPassword}>
-          {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
-          {message && <p style={{ color: 'green', textAlign: 'center' }}>{message}</p>}
-          
-          <div className="input-group">
-            <input 
-              type="email" 
-              className="input-field full-width" 
-              placeholder="Email Address" 
-              required 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-            />
-          </div>
+        if (!email.trim()) {
+            setError('Please enter your email address.');
+            return;
+        }
 
-          <button 
-            type="submit" 
-            className="signup-btn login-btn-wide" 
-            disabled={loading}
-            style={{ opacity: loading ? 0.7 : 1 }}
-          >
-            {loading ? "Sending..." : "Send Reset Link"}
-          </button>
-        </form>
+        try {
+            setLoading(true);
+            // Generate a random 6-digit code
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            setGeneratedCode(code);
 
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <span 
-            onClick={() => navigate('/login')} 
-            style={{ color: '#007bff', cursor: 'pointer', fontSize: '14px', textDecoration: 'underline' }}
-          >
-            Back to Login
-          </span>
+            // Send Email using EmailJS
+            const templateParams = {
+                to_email: email,
+                otp_code: code,
+            };
+
+            await emailjs.send(
+                EMAILJS_SERVICE_ID,
+                EMAILJS_TEMPLATE_ID,
+                templateParams,
+                EMAILJS_PUBLIC_KEY
+            );
+
+            setMessage(`A 6-digit code has been sent to ${email}`);
+            setStep(2);
+        } catch (err) {
+            console.error('Error sending email code:', err);
+            // Fallback option: Use standard Firebase reset email if EmailJS is not configured yet
+            try {
+                await sendPasswordResetEmail(auth, email);
+                setMessage(`A password reset link has been sent to ${email}. Please check your inbox.`);
+            } catch (firebaseErr) {
+                setError(firebaseErr.message || 'Failed to send verification code.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Step 2: Verify the 6-digit code entered by user
+    const handleVerifyCode = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (inputCode.trim() !== generatedCode) {
+            setError('Invalid code. Please check your Gmail inbox and try again.');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            // Trigger Firebase password reset link once code is verified
+            await sendPasswordResetEmail(auth, email);
+            setMessage('Verification successful! We have sent the final password update link to your Gmail.');
+            setTimeout(() => {
+                navigate('/login');
+            }, 3000);
+        } catch (err) {
+            setError('Error processing password reset. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="forgot-password-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+            <div className="forgot-card" style={{ background: '#ffffff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', maxWidth: '400px', width: '100%' }}>
+                <h2 style={{ color: '#062438', textAlign: 'center', marginBottom: '10px' }}>Forgot Password</h2>
+                <p style={{ color: '#666', textAlign: 'center', fontSize: '0.9rem', marginBottom: '20px' }}>
+                    {step === 1 ? 'Enter your registered Gmail account to receive a verification code.' : 'Enter the 6-digit code sent to your Gmail account.'}
+                </p>
+
+                {message && <div style={{ color: '#22c55e', background: '#eefdf5', padding: '10px', borderRadius: '6px', marginBottom: '15px', fontSize: '0.85rem' }}>{message}</div>}
+                {error && <div style={{ color: '#ef4444', background: '#fef2f2', padding: '10px', borderRadius: '6px', marginBottom: '15px', fontSize: '0.85rem' }}>{error}</div>}
+
+                {step === 1 ? (
+                    <form onSubmit={handleSendCode}>
+                        <div style={{ marginBottom: '15px' }}>
+                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: '#062438' }}>Email Address</label>
+                            <input 
+                                type="email" 
+                                placeholder="e.g. student@gmail.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
+                                required
+                            />
+                        </div>
+                        <button 
+                            type="submit" 
+                            disabled={loading}
+                            style={{ width: '100%', padding: '12px', background: '#062438', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}
+                        >
+                            {loading ? 'Sending Code...' : 'Send Verification Code'}
+                        </button>
+                    </form>
+                ) : (
+                    <form onSubmit={handleVerifyCode}>
+                        <div style={{ marginBottom: '15px' }}>
+                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: '#062438' }}>Verification Code</label>
+                            <input 
+                                type="text" 
+                                maxLength="6"
+                                placeholder="Enter 6-digit code"
+                                value={inputCode}
+                                onChange={(e) => setInputCode(e.target.value)}
+                                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', letterSpacing: '4px', textAlign: 'center', fontSize: '1.2rem' }}
+                                required
+                            />
+                        </div>
+                        <button 
+                            type="submit" 
+                            disabled={loading}
+                            style={{ width: '100%', padding: '12px', background: '#062438', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', marginBottom: '10px' }}
+                        >
+                            {loading ? 'Verifying...' : 'Verify Code'}
+                        </button>
+                        <button 
+                            type="button" 
+                            onClick={() => setStep(1)}
+                            style={{ width: '100%', padding: '8px', background: 'transparent', color: '#0284c7', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                        >
+                            Back to Email
+                        </button>
+                    </form>
+                )}
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
-export default ForgotPassword;
+export default Forgotpassword;

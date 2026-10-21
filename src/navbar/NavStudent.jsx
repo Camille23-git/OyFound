@@ -11,13 +11,12 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import logo from "../assets/OYFD.png";
+import logo from "../assets/FOUND.png";
 import "../css/NavStudent.css";
 import { auth, db } from "../firebase";
 
 const DEFAULT_ICON = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-// Sub-component for individual notification item supporting mobile swipe-to-dismiss
 function NotificationItem({ item, onDelete, user }) {
     const [translateX, setTranslateX] = useState(0);
     const [isSwiping, setIsSwiping] = useState(false);
@@ -40,7 +39,6 @@ function NotificationItem({ item, onDelete, user }) {
         if (!isSwiping || window.innerWidth > 576) return;
         setIsSwiping(false);
 
-        // Swipe threshold of 80px to dismiss
         if (Math.abs(translateX) > 80) {
             onDelete(e, item.id);
         } else {
@@ -186,7 +184,6 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
 
                         let resolvedItemName = data.itemName || data.title;
 
-                        // Retrieve the specific item name from reports if omitted on claim document
                         if (!resolvedItemName) {
                             const targetItemId = data.itemId || docSnap.id;
                             if (targetItemId) {
@@ -222,6 +219,23 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
         );
     }, [user]);
 
+    // Automatically close notification card on mobile when scrolling
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isNotifDropdownOpen && window.innerWidth <= 991) {
+                setIsNotifDropdownOpen(false);
+            }
+        };
+
+        if (isNotifDropdownOpen) {
+            window.addEventListener("scroll", handleScroll, { passive: true });
+        }
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [isNotifDropdownOpen]);
+
     const toggleNotifDropdown = () => {
         setIsNotifDropdownOpen((prev) => !prev);
         if (!isNotifDropdownOpen) {
@@ -234,6 +248,9 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
             e.stopPropagation();
             e.preventDefault();
         }
+
+        setIsNotifDropdownOpen(false);
+
         if (!user?.uid || !notifId) return;
 
         setNotifications((prev) => prev.filter((item) => item.id !== notifId));
@@ -250,15 +267,21 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
     };
 
     const handleClearAllNotifs = async (e) => {
-        e.stopPropagation();
-        e.preventDefault();
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        setIsNotifDropdownOpen(false);
+
         if (!user?.uid || notifications.length === 0) return;
 
+        const currentNotifs = [...notifications];
         setNotifications([]);
 
         try {
             const batch = writeBatch(db);
-            notifications.forEach((item) => {
+            currentNotifs.forEach((item) => {
                 const notifRef = doc(db, "messages", user.uid, "claims", item.id);
                 batch.set(notifRef, {
                     dismissedByStudent: true,
@@ -300,35 +323,27 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
 
                 <div className="collapse navbar-collapse" id="studentNavbar">
                     <form className="d-flex mx-lg-4 nav-student-search-form" onSubmit={(e) => e.preventDefault()}>
-                        <input
-                            type="search"
-                            className="form-control search-bar"
-                            placeholder="Search lost and found items..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                        <div className="search-bar-wrapper">
+                            <input
+                                type="search"
+                                className="form-control search-bar"
+                                placeholder="Search lost and found items..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
                     </form>
 
-                    <ul className="navbar-nav ms-auto align-items-lg-center">
+                    <ul className="navbar-nav ms-auto align-items-lg-center nav-student-menu-list">
                         <li className="nav-item nav-student-notification-wrapper me-lg-2" ref={notifDropdownRef}>
                             <button 
                                 type="button" 
                                 className="nav-student-notification-btn" 
                                 onClick={toggleNotifDropdown}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    position: 'relative',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    padding: '6px',
-                                    cursor: 'pointer'
-                                }}
                             >
                                 <svg 
-                                    width="20" 
-                                    height="20" 
+                                    width="19" 
+                                    height="19" 
                                     viewBox="0 0 24 24" 
                                     fill="none" 
                                     stroke="currentColor" 
@@ -339,6 +354,7 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
                                     <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                                     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                                 </svg>
+                                <span className="nav-student-mobile-label">Notifications</span>
                                 {unreadNotifCount > 0 && (
                                     <span className="nav-student-notification-badge badge bg-danger rounded-pill">
                                         {unreadNotifCount > 99 ? "99+" : unreadNotifCount}
@@ -378,9 +394,12 @@ export default function NavStudent({ searchQuery = "", setSearchQuery = () => {}
                             )}
                         </li>
 
-                        <li className="nav-item">
+                        <li className="nav-item nav-student-messages-wrapper">
                             <Link className="nav-link nav-student-messages-link" to="/studentmessages">
-                                Messages
+                                <svg className="nav-student-msg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                <span>Messages</span>
                                 {unreadCount > 0 && (
                                     <span className="badge bg-danger rounded-pill ms-1 nav-student-message-badge">
                                         {unreadCount > 99 ? "99+" : unreadCount}

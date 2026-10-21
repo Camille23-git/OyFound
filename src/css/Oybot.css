@@ -231,6 +231,55 @@
   text-align: left;
 }
 
+/* SUGGESTED QUESTIONS CHIPS AREA */
+.oybot-suggestions-container {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  white-space: nowrap;
+  background-color: #f8fafc;
+  border-top: 1px solid var(--oybot-border-subtle);
+  flex-shrink: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--oybot-border-strong) transparent;
+}
+
+.oybot-suggestions-container::-webkit-scrollbar {
+  height: 4px;
+}
+
+.oybot-suggestions-container::-webkit-scrollbar-thumb {
+  background: var(--oybot-border-strong);
+  border-radius: 4px;
+}
+
+.oybot-suggestion-chip {
+  font-size: 0.73rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background-color: var(--oybot-white);
+  color: var(--oybot-dark-primary);
+  border: 1px solid var(--oybot-border-strong);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px var(--oybot-shadow-light);
+}
+
+.oybot-suggestion-chip:hover:not(:disabled) {
+  background-color: var(--oybot-dark-primary);
+  color: var(--oybot-white);
+  border-color: var(--oybot-dark-primary);
+  transform: translateY(-1px);
+}
+
+.oybot-suggestion-chip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* INPUT FORM FOOTER */
 .oybot-footer {
   padding: 10px 12px;
@@ -333,12 +382,15 @@
 }
 
 /* =========================================================
-   RESPONSIVE MOBILE BREAKPOINTS
+   RESPONSIVE MOBILE BREAKPOINTS (MOBILE ONLY IMPROVEMENTS)
    ========================================================= */
 @media (max-width: 576px) {
+  /* Prevent wrapper positioning from being displaced on mobile when opened */
   .oybot-wrapper {
-    bottom: 16px;
-    right: 16px;
+    bottom: 16px !important;
+    right: 16px !important;
+    left: auto !important;
+    top: auto !important;
   }
 
   .oybot-toggle-btn {
@@ -347,10 +399,29 @@
     font-size: 22px;
   }
 
+  /* Full screen view on mobile devices */
   .oybot-modal {
-    width: calc(100vw - 32px);
-    height: 440px;
-    bottom: 0;
+    position: fixed !important;
+    top: 12px !important;
+    bottom: 12px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .oybot-header {
+    padding: 12px 14px;
+    touch-action: none;
+  }
+
+  .oybot-body {
+    padding: 12px;
+    gap: 10px;
   }
 
   .oybot-msg-row {
@@ -361,29 +432,32 @@
     font-size: 0.8rem;
     padding: 8px 12px;
   }
+
+  .oybot-suggestions-container {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .oybot-suggestion-chip {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+  }
+
+  .oybot-footer {
+    padding: 10px 12px;
+  }
 }
 
 @media (max-width: 400px) {
   .oybot-wrapper {
-    bottom: 12px;
-    right: 12px;
+    bottom: 12px !important;
+    right: 12px !important;
   }
 
   .oybot-modal {
-    width: calc(100vw - 24px);
-    height: 420px;
-  }
-
-  .oybot-header {
-    padding: 12px 14px;
-  }
-
-  .oybot-body {
-    padding: 12px;
-    gap: 10px;
-  }
-
-  .oybot-footer {
-    padding: 8px 10px;
+    top: 8px !important;
+    bottom: 8px !important;
+    left: 8px !important;
+    right: 8px !important;
   }
 }

@@ -14,6 +14,15 @@ const INITIAL_MESSAGE = [
     }
 ];
 
+// Quick suggestion chips for fast user queries
+const SUGGESTIONS = [
+    "How do I search for a specific lost item on campus?",
+    "What should I do if I find a misplaced item on campus?",
+    "How do I submit a claim for an item that belongs to me?",
+    "What proof do I need to present when picking up my item?",
+    "How long does it take for an administrator to review my claim?"
+];
+
 // Smart Fallback Engine for offline mode or general questions when API is inactive
 const getSmartFallbackReply = (userPrompt) => {
     const text = userPrompt.toLowerCase().trim();
@@ -283,6 +292,7 @@ function Oybot() {
     };
 
     const handleMouseDown = (e) => {
+        // Desktop dragging mouse handler
         setIsDragging(true);
         dragRef.current = {
             startX: e.clientX,
@@ -294,6 +304,12 @@ function Oybot() {
     };
 
     const handleTouchStart = (e) => {
+        // Disable dragging on mobile devices (screens width <= 576px)
+        if (window.innerWidth <= 576) {
+            dragRef.current.moved = false;
+            return;
+        }
+
         if (!e.touches[0]) return;
         setIsDragging(true);
         dragRef.current = {
@@ -322,7 +338,7 @@ function Oybot() {
         };
 
         const handleTouchMove = (e) => {
-            if (!isDragging || !e.touches[0]) return;
+            if (!isDragging || !e.touches[0] || window.innerWidth <= 576) return;
             const deltaX = e.touches[0].clientX - dragRef.current.startX;
             const deltaY = e.touches[0].clientY - dragRef.current.startY;
 
@@ -361,11 +377,10 @@ function Oybot() {
         }
     };
 
-    const handleSendMessage = async (e) => {
-        e.preventDefault();
-        if (!inputMessage.trim() || isThinking) return;
+    const processMessageSubmission = async (promptText) => {
+        if (!promptText.trim() || isThinking) return;
 
-        const userText = inputMessage.trim();
+        const userText = promptText.trim();
 
         // Immediate reset check
         if (/^(reset|clear|start over|reset chat|clear chat|bag-o)$/i.test(userText)) {
@@ -400,15 +415,24 @@ function Oybot() {
         setIsThinking(false);
     };
 
+    const handleSendMessage = async (e) => {
+        e.preventDefault();
+        await processMessageSubmission(inputMessage);
+    };
+
+    const handleSuggestionClick = async (suggestionText) => {
+        await processMessageSubmission(suggestionText);
+    };
+
     return (
         <div 
             className="oybot-wrapper"
-            style={{ 
+            style={window.innerWidth > 576 ? { 
                 left: `${position.x}px`, 
                 top: `${position.y}px`,
                 position: 'fixed',
                 zIndex: 9999
-            }}
+            } : { position: 'fixed', zIndex: 9999 }}
         >
             {!isOpen && (
                 <button
@@ -479,6 +503,21 @@ function Oybot() {
                             </div>
                         )}
                         <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Quick suggestion chips above search bar */}
+                    <div className="oybot-suggestions-container">
+                        {SUGGESTIONS.map((suggestion, index) => (
+                            <button
+                                key={index}
+                                type="button"
+                                onClick={() => handleSuggestionClick(suggestion)}
+                                disabled={isThinking}
+                                className="oybot-suggestion-chip"
+                            >
+                                {suggestion}
+                            </button>
+                        ))}
                     </div>
 
                     <form onSubmit={handleSendMessage} className="oybot-footer">

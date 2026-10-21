@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/NavAdmin.css";
 import { auth, db } from "../firebase";
-import logo from "../assets/OYFD.png"; // <-- Updated import path here
+import logo from "../assets/FOUND.png"; // <-- Updated import path here
 
 function NavAdmin() {
     const [user, setUser] = useState(null);
