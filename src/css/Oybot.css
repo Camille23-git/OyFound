@@ -65,18 +65,26 @@
   border: 2px solid var(--oybot-white);
   box-shadow: 0 8px 24px var(--oybot-shadow-dark);
   cursor: pointer;
-  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   outline: none;
+  overflow: hidden;
+  padding: 0;
 }
 
 .oybot-toggle-btn:hover {
   transform: scale(1.08);
   background-color: var(--oybot-dark-hover);
   box-shadow: 0 12px 28px var(--oybot-shadow-dark);
+}
+
+.oybot-toggle-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 /* CHAT MODAL CONTAINER */
@@ -125,8 +133,21 @@
 }
 
 .oybot-avatar-icon {
-  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  background-color: var(--oybot-white);
+}
+
+.oybot-header-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .oybot-title-stack {
@@ -325,67 +346,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
   transition: background-color 0.2s ease, transform 0.1s ease;
   flex-shrink: 0;
+  padding: 0;
 }
 
-.oybot-send-btn:hover {
+.oybot-send-btn:hover:not(:disabled) {
   background-color: var(--oybot-dark-hover);
 }
 
-.oybot-send-btn:active {
+.oybot-send-btn:active:not(:disabled) {
   transform: scale(0.95);
 }
 
-/* BADGES & EXTRA UI ELEMENTS */
-.oybot-badge-found {
-  background-color: var(--oybot-found-bg);
-  color: var(--oybot-status-green);
-  border: 1px solid var(--oybot-found-border);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 600;
+.oybot-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.oybot-badge-lost {
-  background-color: var(--oybot-lost-bg);
-  color: var(--oybot-status-red);
-  border: 1px solid var(--oybot-lost-border);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
-.oybot-badge-auto {
-  background-color: var(--oybot-auto-bg);
-  color: var(--oybot-status-green);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 500;
-}
-
-.oybot-confidence-text {
-  color: var(--oybot-status-muted);
-  font-size: 0.75rem;
-}
-
-.oybot-image-box {
-  background-color: var(--oybot-img-bg);
-  border: 1px solid var(--oybot-border-subtle);
-  border-radius: 8px;
-  padding: 4px;
-  max-width: 100%;
+.oybot-send-svg {
+  width: 16px;
+  height: 16px;
+  transform: translateX(-1px) rotate(45deg);
 }
 
 /* =========================================================
    RESPONSIVE MOBILE BREAKPOINTS (MOBILE ONLY IMPROVEMENTS)
    ========================================================= */
 @media (max-width: 576px) {
-  /* Prevent wrapper positioning from being displaced on mobile when opened */
   .oybot-wrapper {
     bottom: 16px !important;
     right: 16px !important;
@@ -396,10 +384,8 @@
   .oybot-toggle-btn {
     width: 54px;
     height: 54px;
-    font-size: 22px;
   }
 
-  /* Full screen view on mobile devices */
   .oybot-modal {
     position: fixed !important;
     top: 12px !important;
@@ -416,7 +402,6 @@
 
   .oybot-header {
     padding: 12px 14px;
-    touch-action: none;
   }
 
   .oybot-body {
