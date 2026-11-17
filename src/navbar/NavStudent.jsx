@@ -9,7 +9,7 @@ import {
     writeBatch
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import logo from "../assets/FOUND.png";
 import "../css/NavStudent.css";
@@ -140,6 +140,7 @@ export default function NavStudent({
     selectedCategory,
     setSelectedCategory
 }) {
+    const location = useLocation();
     const [user, setUser] = useState(null);
     const [userData, setUserData] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -158,6 +159,9 @@ export default function NavStudent({
 
     const isInitialNotifLoad = useRef(true);
     const notifDropdownRef = useRef(null);
+
+    // Check if we are currently on the Home / Dashboard page where items are posted
+    const isHomeDashboard = location.pathname === "/student" || location.pathname === "/";
 
     useEffect(() => {
         if (selectedCategory !== undefined) {
@@ -493,57 +497,59 @@ export default function NavStudent({
                 </div>
             </nav>
 
-            {/* Dedicated Sub-Bar with Search Bar & Category Filter Pills */}
-            <div className="nav-student-subbar">
-                <div className="container-fluid nav-student-subbar-container">
-                    <div className="category-filter-container mx-auto">
-                        <div className="category-filter-scroll justify-content-lg-center">
-                            {/* Glassmorphic Search Input */}
-                            <div className="nav-student-search-box">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="nav-student-search-icon">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                                <input
-                                    type="text"
-                                    className="nav-student-search-input"
-                                    placeholder="Search items, location..."
-                                    value={searchText}
-                                    onChange={handleSearchChange}
-                                />
-                                {searchText && (
-                                    <button
-                                        type="button"
-                                        className="nav-student-search-clear"
-                                        onClick={handleClearSearch}
-                                        title="Clear search"
-                                    >
-                                        ✕
-                                    </button>
-                                )}
-                            </div>
+            {/* Sub-Bar (Search Bar & Category Pills) - VISIBLE ONLY ON HOME DASHBOARD */}
+            {isHomeDashboard && (
+                <div className="nav-student-subbar">
+                    <div className="container-fluid nav-student-subbar-container">
+                        <div className="category-filter-container mx-auto">
+                            <div className="category-filter-scroll justify-content-lg-center">
+                                {/* Glassmorphic Search Input */}
+                                <div className="nav-student-search-box">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="nav-student-search-icon">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <input
+                                        type="text"
+                                        className="nav-student-search-input"
+                                        placeholder="Search items, location..."
+                                        value={searchText}
+                                        onChange={handleSearchChange}
+                                    />
+                                    {searchText && (
+                                        <button
+                                            type="button"
+                                            className="nav-student-search-clear"
+                                            onClick={handleClearSearch}
+                                            title="Clear search"
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
+                                </div>
 
-                            {/* Clickable Category Pills */}
-                            {CATEGORIES.map((cat) => {
-                                const isActive = activeCategory === cat.id;
-                                return (
-                                    <button
-                                        key={cat.id}
-                                        type="button"
-                                        className={`category-pill ${isActive ? "active" : ""}`}
-                                        onClick={() => handleCategorySelect(cat.id)}
-                                    >
-                                        <span className="pill-icon">
-                                            <CategoryIcon name={cat.icon} />
-                                        </span>
-                                        <span className="pill-text">{cat.label}</span>
-                                    </button>
-                                );
-                            })}
+                                {/* Clickable Category Pills */}
+                                {CATEGORIES.map((cat) => {
+                                    const isActive = activeCategory === cat.id;
+                                    return (
+                                        <button
+                                            key={cat.id}
+                                            type="button"
+                                            className={`category-pill ${isActive ? "active" : ""}`}
+                                            onClick={() => handleCategorySelect(cat.id)}
+                                        >
+                                            <span className="pill-icon">
+                                                <CategoryIcon name={cat.icon} />
+                                            </span>
+                                            <span className="pill-text">{cat.label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
