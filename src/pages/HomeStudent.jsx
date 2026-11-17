@@ -14,6 +14,7 @@ import {
     where 
 } from "firebase/firestore";
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Oybot from '../components/Oybot.jsx';
 import { auth, db } from '../firebase';
 
@@ -91,12 +92,56 @@ const autoIdentifyCategory = (itemName, dbCategory) => {
     return "General Items";
 };
 
-function HomeStudent({ searchQuery }) {
+function HomeStudent({ searchQuery = "" }) {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('All');
+    
+    // Read selected category from localStorage (defaults to "Personal Valuables" to match NavStudent)
+    const [selectedCategory, setSelectedCategory] = useState(() => {
+        return localStorage.getItem("selectedStudentCategory") || "Personal Valuables";
+    });
+
+    // Read live search query from localStorage (synced with NavStudent search input)
+    const [liveSearchQuery, setLiveSearchQuery] = useState(() => {
+        return searchQuery || localStorage.getItem("studentSearchQuery") || "";
+    });
+
     const [reports, setReports] = useState([]);
     const [userClaims, setUserClaims] = useState({});
     const [allGlobalClaims, setAllGlobalClaims] = useState({});
     const [loadingItemId, setLoadingItemId] = useState(null);
+
+    // Sync if parent prop changes externally
+    useEffect(() => {
+        if (searchQuery) {
+            setLiveSearchQuery(searchQuery);
+        }
+    }, [searchQuery]);
+
+    // =========================================================
+    // REAL-TIME SYNC FOR CATEGORY PILLS & SEARCH BAR
+    // =========================================================
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const currentCat = localStorage.getItem("selectedStudentCategory");
+            if (currentCat) {
+                setSelectedCategory(currentCat);
+            }
+
+            const currentSearch = localStorage.getItem("studentSearchQuery");
+            if (currentSearch !== null) {
+                setLiveSearchQuery(currentSearch);
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        const interval = setInterval(handleStorageChange, 100);
+
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+            clearInterval(interval);
+        };
+    }, []);
 
     // =========================================================
     // REAL-TIME REPORTS LISTENER
@@ -112,7 +157,6 @@ function HomeStudent({ searchQuery }) {
 
                 // Exclude items that are already approved or claimed
                 if (status !== "approved" && status !== "claimed") {
-                    
                     // Lost items MUST have an image to be displayed
                     if (status === "lost") {
                         if (hasPicture) {
@@ -220,10 +264,8 @@ function HomeStudent({ searchQuery }) {
                 const remainingRepliesSnap = await getDocs(remainingRepliesQuery);
 
                 if (remainingRepliesSnap.empty) {
-                    // Completely remove conversation from sidebar if no messages remain
                     await deleteDoc(doc(db, "messages", currentUser.uid));
                 } else {
-                    // Set preview to the actual content of the last remaining reply
                     const lastReply = remainingRepliesSnap.docs[0].data();
                     const lastReplyText = lastReply.imageUrl ? "📷 Sent an image" : (lastReply.text || "");
                     const lastRole = lastReply.role || lastReply.sender || "student";
@@ -235,7 +277,6 @@ function HomeStudent({ searchQuery }) {
                     }, { merge: true });
                 }
 
-                // 4. Reset global report flags in Firestore (if document still exists in reports)
                 const reportSnap = await getDoc(reportDocRef);
                 if (reportSnap.exists()) {
                     await setDoc(reportDocRef, { 
@@ -309,7 +350,6 @@ function HomeStudent({ searchQuery }) {
                     timestamp: serverTimestamp()
                 });
                 
-                // 5. Update global report document in Firestore
                 await setDoc(reportDocRef, { 
                     isPendingClaim: true,
                     claimedBy: currentUser.uid,
@@ -327,12 +367,28 @@ function HomeStudent({ searchQuery }) {
     };
 
     // =========================================================
-    // FILTERING LOGIC
+    // MESSAGE BUTTON HANDLER FOR LOST ITEMS (NAVIGATES TO SMessages)
+    // =========================================================
+    const handleMessageClick = (e, item) => {
+        e.stopPropagation();
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            alert("You must be logged in to message support.");
+            navigate('/login');
+            return;
+        }
+
+        navigate('/studentmessages', { state: { selectedItem: item } });
+    };
+
+    // =========================================================
+    // FILTERING LOGIC (SEAMLESS TAB + CATEGORY + LIVE SEARCH)
     // =========================================================
     const filteredItems = reports.filter(item => {
         const itemStatus = (item.status || "").toLowerCase();
         const tabLower = activeTab.toLowerCase();
         
+        // 1. Tab Filtering (Lost / Found / All tabs in the middle)
         let matchesTab = false;
         if (activeTab === 'All') {
             matchesTab = true;
@@ -344,11 +400,20 @@ function HomeStudent({ searchQuery }) {
             matchesTab = itemStatus === tabLower;
         }
         
-        const queryClean = (searchQuery || "").toLowerCase().trim();
+        // 2. Category Filtering (Navbar category pills)
+        const identifiedCategory = autoIdentifyCategory(item.itemName, item.category);
+        const currentSelectedCat = selectedCategory || "All";
+        
+        const matchesCategory = 
+            currentSelectedCat === "All" || 
+            identifiedCategory.toLowerCase() === currentSelectedCat.toLowerCase();
+
+        // 3. Live Search Query Filtering (Navbar search bar)
+        const queryClean = (liveSearchQuery || "").toLowerCase().trim();
         const nameToSearch = (item.itemName || "").toLowerCase();
         const descToSearch = (item.description || "").toLowerCase();
         const locationToSearch = (item.locationName || item.landmark || "").toLowerCase();
-        const categoryToSearch = autoIdentifyCategory(item.itemName, item.category).toLowerCase();
+        const categoryToSearch = identifiedCategory.toLowerCase();
 
         const matchesSearch = queryClean === "" || 
             nameToSearch.includes(queryClean) || 
@@ -356,7 +421,8 @@ function HomeStudent({ searchQuery }) {
             locationToSearch.includes(queryClean) ||
             categoryToSearch.includes(queryClean);
 
-        return matchesTab && matchesSearch;
+        // All three conditions must match simultaneously
+        return matchesTab && matchesCategory && matchesSearch;
     });
 
     const renderClaimButtonText = (item, claimData, globalClaim, isMine) => {
@@ -402,6 +468,8 @@ function HomeStudent({ searchQuery }) {
                             const currentUser = auth.currentUser;
                             const hasPicture = Boolean(item.imageUrl && item.imageUrl.trim() !== "");
                             
+                            const isLostItem = itemStatus === "lost";
+                            
                             const isPendingClaimActive = 
                                 (globalClaim && globalClaim.status === "pending") || 
                                 (claimData && claimData.status === "pending") || 
@@ -420,7 +488,6 @@ function HomeStudent({ searchQuery }) {
 
                             return (
                                 <div key={item.id} className="student-card-container">
-                                    {/* Display image section ONLY if an image exists */}
                                     {hasPicture && (
                                         <div className="student-card-left">
                                             <img 
@@ -452,28 +519,37 @@ function HomeStudent({ searchQuery }) {
                                             <span className={`status-pill status-${itemStatus}`}>
                                                 STATUS: {(item.status || "UNCLAIMED").toUpperCase()}
                                             </span>
-                                            <button 
-                                                className={`claim-btn ${
-                                                    isPendingClaimActive && isMine
-                                                        ? 'pending' 
-                                                        : isPendingClaimActive && !isMine
-                                                        ? 'claimed-other'
-                                                        : isApprovedOrClaimed 
-                                                        ? 'claimed' 
-                                                        : ''
-                                                }`}
-                                                onClick={(e) => handleToggleClaim(e, item, identifiedCategory)}
-                                                disabled={
-                                                    loadingItemId === item.id || 
-                                                    isApprovedOrClaimed || 
-                                                    (isPendingClaimActive && !isMine)
-                                                }
-                                            >
-                                                {loadingItemId === item.id 
-                                                    ? "Processing..." 
-                                                    : renderClaimButtonText(item, claimData, globalClaim, isMine)
-                                                }
-                                            </button>
+                                            {isLostItem ? (
+                                                <button 
+                                                    className="claim-btn"
+                                                    onClick={(e) => handleMessageClick(e, item)}
+                                                >
+                                                    Message
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    className={`claim-btn ${
+                                                        isPendingClaimActive && isMine
+                                                            ? 'pending' 
+                                                            : isPendingClaimActive && !isMine
+                                                            ? 'claimed-other'
+                                                            : isApprovedOrClaimed 
+                                                            ? 'claimed' 
+                                                            : ''
+                                                    }`}
+                                                    onClick={(e) => handleToggleClaim(e, item, identifiedCategory)}
+                                                    disabled={
+                                                        loadingItemId === item.id || 
+                                                        isApprovedOrClaimed || 
+                                                        (isPendingClaimActive && !isMine)
+                                                    }
+                                                >
+                                                    {loadingItemId === item.id 
+                                                        ? "Processing..." 
+                                                        : renderClaimButtonText(item, claimData, globalClaim, isMine)
+                                                    }
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -483,7 +559,6 @@ function HomeStudent({ searchQuery }) {
                 )}
             </div>
 
-            {/* DRAGGABLE OYBOT FOR STUDENT VIEW */}
             <Oybot />
         </div>
     );

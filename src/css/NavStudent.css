@@ -1,21 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 /* =========================================================
-   BASE
+    BASE STYLES & SUBBAR LAYOUT
 ========================================================= */
+
+.nav-student-wrapper {
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+}
 
 .nav-student-navbar {
     background: #011222 !important;
-    font-family: 'Poppins', sans-serif;
-    border-bottom: 1px solid rgba(119, 141, 169, 0.2);
+    border-bottom: 1px solid rgba(119, 141, 169, 0.15);
 }
 
 .nav-student-container {
     width: 100%;
 }
 
+/* Dedicated Sub-bar for Category Filter Pills */
+.nav-student-subbar {
+    background: #061a2c;
+    border-bottom: 1px solid rgba(119, 141, 169, 0.2);
+    padding: 10px 0;
+    width: 100%;
+}
+
+.nav-student-subbar-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 16px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* =========================================================
-   DESKTOP STYLING ONLY (MATCHES ADMIN NAVBAR)
+    DESKTOP STYLING ONLY
 ========================================================= */
 
 @media (min-width: 992px) {
@@ -29,7 +50,7 @@
 
     .nav-student-container {
         margin: 0;
-        padding: 0 40px !important;
+        padding: 0 30px !important;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -54,9 +75,8 @@
     }
 }
 
-
 /* =========================================================
-   MESSAGES & NAVIGATION LINKS
+    MESSAGES & NAVIGATION LINKS
 ========================================================= */
 
 .nav-student-messages-link {
@@ -82,7 +102,6 @@
     display: none;
 }
 
-/* Hover effect on standard pages */
 .nav-student-messages-link:hover {
     color: #E0E1DD !important;
     background: rgba(65, 90, 119, 0.45) !important;
@@ -99,62 +118,49 @@
     outline: none !important;
 }
 
-.nav-student-messages-link.active:hover {
-    background: rgba(65, 90, 119, 0.45) !important;
-}
-
 .nav-student-message-badge {
     font-size: 0.6rem;
     margin-left: 6px;
 }
 
 /* =========================================================
-   OYFOUND LOGO
+    OYFOUND LOGO
 ========================================================= */
+
 .nav-student-brand {
     display: flex;
     align-items: center;
     text-decoration: none;
-    overflow: visible; /* Allows scale without clipping */
+    overflow: visible;
 }
 
 .nav-student-brand .nav-student-logo,
 .nav-student-brand img {
     display: block;
-    height: 68px; /* Set base height to match navbar */
+    height: 68px;
     width: auto;
     object-fit: contain;
-
-    /* Scaled up 35% so "Campus Lost & Found System" tagline matches public navbar size */
     transform: scale(1.35);
-    transform-origin: left center; /* Keeps left edge aligned */
-
+    transform-origin: left center;
     filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.4));
     transition: transform 0.2s ease;
 }
 
 .nav-student-brand img:hover {
-    transform: scale(1.40); /* Match hover pop effect */
+    transform: scale(1.40);
 }
 
-.logo-text-base {
-    font-family: 'Poppins', sans-serif;
-    font-size: 24px;
-    letter-spacing: -0.4px;
-}
-
-/* Mobile Responsive adjustment */
 @media (max-width: 600px) {
     .nav-student-brand .nav-student-logo,
     .nav-student-brand img {
-        height: 60px;
-        transform: scale(1.25);
+        height: 44px;
+        transform: scale(1.15);
         transform-origin: left center;
     }
 }
 
 /* =========================================================
-   MOBILE NAVBAR TOGGLE
+    MOBILE NAVBAR TOGGLE
 ========================================================= */
 
 .nav-student-toggler {
@@ -172,67 +178,107 @@
 }
 
 /* =========================================================
-   SEARCH BAR (HOMESTUDENT ICE-GLASS THEME)
+    CATEGORY PILLS UI (CLICK-ONLY ACTIVE STATE)
 ========================================================= */
 
-.nav-student-search-form {
-    max-width: 440px;
-    width: 100%;
-}
-
-.search-bar-wrapper {
-    position: relative;
+.category-filter-container {
     width: 100%;
     display: flex;
-    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.search-bar {
-    /* Ice-blue translucent tint matching the feed background */
-    background: rgba(192, 214, 228, 0.18) !important;
-    backdrop-filter: blur(14px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
-
-    /* Soft ice border highlight */
-    border: 1px solid rgba(192, 214, 228, 0.35) !important;
-    
-    /* Clean light slate-blue text */
-    color: #e0e1dd !important;
-    border-radius: 50px !important;
-    min-height: 38px;
-    height: 38px;
-    padding-left: 20px !important;
-    padding-right: 20px !important;
+.category-filter-scroll {
+    display: flex;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 4px 6px;
     width: 100%;
-    font-size: 0.88rem;
-    font-weight: 400;
-    
-    /* Inner depth shadow */
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.25);
-    transition: all 0.25s ease;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Ice-blue tinted placeholder text */
-.search-bar::placeholder {
-    color: rgba(192, 214, 228, 0.7) !important;
-    font-weight: 400;
+.category-filter-scroll::-webkit-scrollbar {
+    display: none;
 }
 
-/* Glass hover effect */
-.search-bar:hover {
-    background: rgba(192, 214, 228, 0.25) !important;
-    border-color: rgba(192, 214, 228, 0.5) !important;
+@media (min-width: 992px) {
+    .category-filter-scroll {
+        justify-content: center;
+    }
 }
 
-/* Focus glow matching the light feed theme */
-.search-bar:focus {
-    background: rgba(192, 214, 228, 0.3) !important;
-    border-color: rgba(192, 214, 228, 0.75) !important;
-    box-shadow: 0 0 14px rgba(192, 214, 228, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.2) !important;
-    outline: none !important;
-}
+
 /* =========================================================
-   NOTIFICATION AREA (Dark Slate Glass Theme)
+    CATEGORY PILLS STYLING
+========================================================= */
+
+.category-pill {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(27, 38, 59, 0.7);
+    border: 1px solid rgba(119, 141, 169, 0.25);
+    color: #B5D5E7;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    white-space: nowrap;
+}
+
+.pill-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #93b2c9;
+    transition: color 0.15s ease;
+}
+
+/* 1. HOVER STATE: Only applies to buttons that are NOT currently active */
+.category-pill:not(.active):hover {
+    background: rgba(53, 79, 102, 0.6);
+    border-color: rgba(181, 213, 231, 0.6);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.category-pill:not(.active):hover .pill-icon {
+    color: #FFFFFF;
+}
+
+/* 2. ACTIVE / SELECTED STATE: Stays permanently highlighted even when the mouse moves away */
+.category-pill.active {
+    background: rgba(53, 79, 102, 0.85) !important;
+    border-color: rgba(181, 213, 231, 0.9) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 10px rgba(181, 213, 231, 0.25);
+}
+
+.category-pill.active .pill-icon {
+    color: #FFFFFF !important;
+}
+/* Non-Clickable Indicator Styling */
+.category-pill.category-indicator {
+    cursor: default !important;
+    pointer-events: none !important;
+    opacity: 0.85;
+    background: rgba(27, 38, 59, 0.4) !important;
+    border-color: rgba(119, 141, 169, 0.15) !important;
+}
+
+.category-pill.category-indicator:hover {
+    transform: none !important;
+}
+
+/* =========================================================
+    NOTIFICATION AREA & DROPDOWN
 ========================================================= */
 
 .nav-student-notification-wrapper {
@@ -287,6 +333,7 @@
     max-width: calc(100vw - 30px);
     background: rgba(6, 36, 56, 0.95);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(181, 213, 231, 0.25);
     border-radius: 14px;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
@@ -317,10 +364,13 @@
     text-decoration: none;
     cursor: pointer;
     transition: color 0.2s ease;
+    background: none;
+    border: none;
+    padding: 0;
 }
 
 .nav-student-notification-mark-read:hover {
-    color: #b5d5e7;
+    color: #ffffff;
 }
 
 .nav-student-notification-list {
@@ -338,8 +388,8 @@
     color: #b5d5e7;
     text-decoration: none;
     transition: background-color 0.2s ease;
-    touch-action: pan-y;
-    will-change: transform, opacity;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .nav-student-notification-item:hover {
@@ -352,19 +402,6 @@
 
 .nav-student-notification-item.unread:hover {
     background: rgba(24, 65, 93, 0.65);
-}
-
-.nav-student-notification-icon {
-    width: 32px;
-    height: 32px;
-    flex: 0 0 32px;
-    border-radius: 50%;
-    background: #08283e;
-    border: 1px solid rgba(181, 213, 231, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #8bb0bf;
 }
 
 .nav-student-notification-content {
@@ -393,13 +430,6 @@
     color: #99bccc;
 }
 
-.nav-student-notification-time {
-    display: block;
-    font-size: 0.65rem;
-    color: #99bccc;
-    margin-top: 4px;
-}
-
 .nav-student-notification-empty {
     padding: 20px;
     text-align: center;
@@ -425,9 +455,64 @@
 .nav-student-notification-footer a:hover {
     color: #ffffff;
 }
+/* =========================================================
+    NAV STUDENT SEARCH BAR STYLING
+========================================================= */
+
+.nav-student-search-box {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: rgba(27, 38, 59, 0.85);
+    border: 1px solid rgba(119, 141, 169, 0.35);
+    border-radius: 50px;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 210px;
+}
+
+.nav-student-search-box:focus-within {
+    border-color: rgba(181, 213, 231, 0.9);
+    box-shadow: 0 0 10px rgba(181, 213, 231, 0.25);
+}
+
+.nav-student-search-icon {
+    color: #93b2c9;
+    flex-shrink: 0;
+}
+
+.nav-student-search-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #FFFFFF;
+    font-size: 0.78rem;
+    width: 100%;
+}
+
+.nav-student-search-input::placeholder {
+    color: #93b2c9;
+    opacity: 0.8;
+}
+
+.nav-student-search-clear {
+    background: transparent;
+    border: none;
+    color: #93b2c9;
+    font-size: 0.75rem;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.nav-student-search-clear:hover {
+    color: #FFFFFF;
+}
 
 /* =========================================================
-   USER / PROFILE
+    USER / PROFILE SECTION
 ========================================================= */
 
 .nav-student-user-section {
@@ -437,6 +522,9 @@
 .nav-student-profile-link {
     color: #E0E1DD;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .nav-student-user-name {
@@ -449,428 +537,16 @@
     height: 36px;
     object-fit: cover;
     border: 2px solid #778DA9;
-}
-
-/* =========================================================
-   FLOATING OYBOT
-========================================================= */
-
-.floating-ai-wrapper {
-    position: fixed;
-    bottom: auto;
-    right: auto;
-    z-index: 9999;
-    user-select: none;
-}
-
-.floating-ai-wrapper.is-dragging {
-    cursor: grabbing;
-}
-
-/* =========================================================
-   OYBOT BUTTON
-========================================================= */
-
-.floating-ai-btn {
-    cursor: grab;
-    padding: 10px 16px;
-    border-radius: 35px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid #778DA9;
-    background: #1B263B;
-    color: #E0E1DD;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease;
-}
-
-.floating-ai-btn:hover {
-    background: #415A77;
-    transform: translateY(-2px);
-}
-
-.floating-ai-btn:active {
-    cursor: grabbing;
-}
-
-.floating-ai-text {
-    font-weight: 600;
-    font-size: 0.95rem;
-    white-space: nowrap;
-}
-
-/* =========================================================
-   OYBOT CHAT POPUP
-========================================================= */
-
-.ai-chat-popup-card {
-    position: absolute;
-    bottom: 70px;
-    right: 0;
-    width: 360px;
-    max-width: calc(100vw - 30px);
-    height: 520px;
-    background: #0D1B2A;
-    border: 1px solid #415A77;
-    border-radius: 18px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-    font-family: 'Poppins', sans-serif;
-}
-
-/* =========================================================
-   OYBOT HEADER
-========================================================= */
-
-.ai-popup-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 17px;
-    background: #1B263B;
-    border-bottom: 1px solid rgba(119, 141, 169, 0.25);
-}
-
-.ai-popup-title-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.ai-popup-icon {
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.ai-popup-title-group h6 {
-    margin: 0;
-    color: #E0E1DD;
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.ai-status-online {
-    display: block;
-    margin-top: 2px;
-    color: #778DA9;
-    font-size: 0.68rem;
-}
-
-/* =========================================================
-   CLOSE BUTTON
-========================================================= */
-
-.ai-close-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: #778DA9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.ai-close-btn:hover {
-    background: rgba(119, 141, 169, 0.15);
-    color: #E0E1DD;
-}
-
-/* =========================================================
-   CHAT MESSAGES
-========================================================= */
-
-.ai-popup-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-    scrollbar-width: thin;
-    scrollbar-color: #415A77 transparent;
-}
-
-.ai-message-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 14px;
-}
-
-.ai-message-row.user {
-    flex-direction: row-reverse;
-}
-
-/* =========================================================
-   MESSAGE AVATAR
-========================================================= */
-
-.ai-avatar {
-    flex: 0 0 28px;
-    width: 28px;
-    height: 28px;
     border-radius: 50%;
-    background: #415A77;
-    color: #E0E1DD;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.ai-message-row.user .ai-avatar {
-    background: #778DA9;
 }
 
 /* =========================================================
-   MESSAGE BUBBLE
-========================================================= */
-
-.ai-bubble-content {
-    max-width: 78%;
-}
-
-.ai-bubble {
-    background: #1B263B;
-    color: #E0E1DD;
-    padding: 9px 12px;
-    border-radius: 12px;
-    font-size: 0.78rem;
-    line-height: 1.5;
-    word-break: break-word;
-}
-
-.ai-message-row.user .ai-bubble {
-    background: #415A77;
-}
-
-.ai-timestamp {
-    display: block;
-    margin-top: 4px;
-    color: #778DA9;
-    font-size: 0.6rem;
-}
-
-/* =========================================================
-   TYPING INDICATOR
-========================================================= */
-
-.typing-indicator {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    width: fit-content;
-}
-
-.typing-indicator span {
-    width: 5px;
-    height: 5px;
-    background: #778DA9;
-    border-radius: 50%;
-    animation: typingPulse 1.2s infinite ease-in-out;
-}
-
-.typing-indicator span:nth-child(2) {
-    animation-delay: 0.15s;
-}
-
-.typing-indicator span:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-@keyframes typingPulse {
-    0%, 60%, 100% {
-        opacity: 0.3;
-        transform: translateY(0);
-    }
-    30% {
-        opacity: 1;
-        transform: translateY(-3px);
-    }
-}
-
-/* =========================================================
-   SUGGESTION CHIPS
-========================================================= */
-
-.ai-popup-chips {
-    display: flex;
-    gap: 7px;
-    overflow-x: auto;
-    padding: 10px 14px;
-    border-top: 1px solid rgba(119, 141, 169, 0.15);
-    scrollbar-width: none;
-}
-
-.ai-popup-chips::-webkit-scrollbar {
-    display: none;
-}
-
-.ai-chip {
-    flex: 0 0 auto;
-    border: 1px solid #415A77;
-    background: #1B263B;
-    color: #E0E1DD;
-    border-radius: 15px;
-    padding: 6px 10px;
-    font-size: 0.65rem;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.ai-chip:hover {
-    background: #415A77;
-}
-
-/* =========================================================
-   CHAT INPUT
-========================================================= */
-
-.ai-popup-input-area {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px;
-    background: #1B263B;
-    border-top: 1px solid rgba(119, 141, 169, 0.2);
-}
-
-.ai-popup-input-area input {
-    flex: 1;
-    min-width: 0;
-    border: 1px solid #415A77;
-    background: #0D1B2A;
-    color: #E0E1DD;
-    border-radius: 10px;
-    padding: 9px 11px;
-    outline: none;
-    font-size: 0.75rem;
-}
-
-.ai-popup-input-area input::placeholder {
-    color: #778DA9;
-}
-
-.ai-popup-input-area input:focus {
-    border-color: #778DA9;
-}
-
-/* =========================================================
-   SEND BUTTON
-========================================================= */
-
-.ai-popup-send {
-    width: 36px;
-    height: 36px;
-    flex: 0 0 36px;
-    border: none;
-    border-radius: 10px;
-    background: #415A77;
-    color: #E0E1DD;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.ai-popup-send:hover:not(:disabled) {
-    background: #778DA9;
-}
-
-.ai-popup-send:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-/* =========================================================
-   NOTIFICATION TOAST POPUP (Fixed Floating Banner)
-========================================================= */
-
-.nav-notif-toast-popup {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-    width: calc(100% - 40px);
-    max-width: 380px;
-    background: #1B263B;
-    border: 1px solid #415A77;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    font-family: 'Poppins', sans-serif;
-}
-
-.nav-notif-toast-popup.approved {
-    border-left: 5px solid #2e7d32;
-}
-
-.nav-notif-toast-popup.rejected {
-    border-left: 5px solid #d32f2f;
-}
-
-.toast-icon-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2px;
-}
-
-.toast-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.toast-title {
-    margin: 0 0 4px 0;
-    color: #E0E1DD;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.toast-message {
-    margin: 0;
-    color: #778DA9;
-    font-size: 0.78rem;
-    line-height: 1.4;
-}
-
-.toast-close-btn {
-    background: transparent;
-    border: none;
-    color: #778DA9;
-    cursor: pointer;
-    padding: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: color 0.2s ease;
-}
-
-.toast-close-btn:hover {
-    color: #E0E1DD;
-}
-
-/* =========================================================
-   RESPONSIVE NAVIGATION
+    RESPONSIVE MEDIA QUERIES (TABLET & MOBILE)
 ========================================================= */
 
 @media (max-width: 991px) {
-    .nav-student-search-form {
-        max-width: 100%;
-        margin-top: 14px !important;
-        margin-bottom: 12px !important;
+    .nav-student-subbar-container {
+        padding: 0 10px !important;
     }
 
     .nav-student-menu-list {
@@ -907,10 +583,6 @@
         top: auto;
         right: auto;
         margin-left: auto;
-    }
-
-    .nav-student-messages-wrapper {
-        width: 100%;
     }
 
     .nav-student-messages-link {
@@ -962,10 +634,6 @@
     }
 }
 
-/* =========================================================
-   MOBILE
-========================================================= */
-
 @media (max-width: 576px) {
     .nav-student-navbar {
         padding: 8px 14px;
@@ -973,46 +641,18 @@
 
     .nav-student-brand .nav-student-logo,
     .nav-student-brand img {
-        height: 40px;
+        height: 38px;
         width: auto;
     }
 
-    .search-bar {
-        font-size: 0.85rem;
-        min-height: 38px;
-        padding-left: 16px !important;
-        padding-right: 16px !important;
+    .nav-student-subbar {
+        padding: 6px 0;
     }
 
-    .ai-chat-popup-card {
-        position: fixed;
-        left: 10px;
-        right: 10px;
-        bottom: 75px;
-        width: auto;
-        max-width: none;
-        height: min(520px, calc(100vh - 110px));
-    }
-
-    .floating-ai-btn {
-        padding: 8px 12px;
-    }
-
-    .floating-ai-btn svg {
-        width: 32px;
-        height: 32px;
-    }
-
-    .floating-ai-text {
-        font-size: 0.85rem;
-    }
-
-    .nav-notif-toast-popup {
-        top: 15px;
-        left: 15px;
-        right: 15px;
-        width: auto;
-        max-width: none;
+    .category-pill {
+        padding: 5px 12px;
+        font-size: 0.74rem;
+        gap: 5px;
     }
 
     .nav-student-notification-dropdown {
