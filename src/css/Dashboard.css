@@ -2880,29 +2880,44 @@
 }
 
 /* Make every registered student's/admin's name easier to scan. */
+/* Improve registered user information readability */
 .dashboard-wrapper .user-name {
-    font-size: 15px !important;
-    line-height: 1.35 !important;
+    font-size: 17px !important;
+    line-height: 1.4 !important;
     font-weight: 700 !important;
-    letter-spacing: .1px;
     color: #062438 !important;
-    margin-bottom: 4px !important;
+    letter-spacing: 0.2px;
+    margin-bottom: 5px !important;
+}
+
+.dashboard-wrapper .user-email,
+.dashboard-wrapper .user-meta {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    font-weight: 500 !important;
+    color: #183e58 !important;
     overflow-wrap: anywhere;
 }
 
-/* Give the larger name enough room while keeping cards responsive. */
-.dashboard-wrapper .user-card {
-    align-items: center;
-    min-height: 76px;
+/* Keep icons aligned with the text */
+.dashboard-wrapper .user-email svg,
+.dashboard-wrapper .user-meta svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
 }
-.dashboard-wrapper .user-info {
-    min-width: 0;
-    flex: 1 1 auto;
-}
+
+/* Mobile responsiveness */
 @media (max-width: 600px) {
     .dashboard-wrapper .user-name {
-        font-size: 14px !important;
+        font-size: 15px !important;
     }
+
+    .dashboard-wrapper .user-email,
+    .dashboard-wrapper .user-meta {
+        font-size: 13px !important;
+    }
+
     .dashboard-wrapper .summary-icon {
         width: 40px !important;
         height: 40px !important;
