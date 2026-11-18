@@ -522,3 +522,42 @@
         flex: none;
     }
 }
+/* =========================================================
+    EDIT MODAL IMAGE PREVIEW SECTION
+========================================================= */
+
+.edit-input-group input[type="file"] {
+    display: block;
+    margin-top: 6px;
+    padding: 6px;
+    font-size: 0.82rem;
+    color: #062438;
+    background: #f8fafc;
+    border: 1px dashed rgba(119, 141, 169, 0.4);
+    border-radius: 6px;
+    width: 100%;
+    cursor: pointer;
+}
+.edit-input-group button.action-btn {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+    letter-spacing: -0.2px;
+}
+
+.edit-input-group input[type="file"]::-webkit-file-upload-button {
+    background: #062438;
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-right: 10px;
+    transition: background 0.15s ease;
+}
+
+.edit-input-group input[type="file"]::-webkit-file-upload-button:hover {
+    background: #0d1b2a;
+}

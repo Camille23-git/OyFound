@@ -1,5 +1,6 @@
 import { addDoc, collection, doc, getDoc, onSnapshot, orderBy, query, serverTimestamp, setDoc } from "firebase/firestore";
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import '../css/Messages.css';
 import { auth, db } from '../firebase';
 
@@ -8,6 +9,9 @@ const CLOUDINARY_CLOUD_NAME = "dvfykqznw";
 const CLOUDINARY_UPLOAD_PRESET = "messages";
 
 function SMessages() {
+    const location = useLocation();
+    const passedItem = location.state?.selectedItem;
+
     const adminProfile = {
         fullName: 'Support Admin',
         role: 'Representative',
@@ -26,6 +30,15 @@ function SMessages() {
     
     const user = auth.currentUser;
     const studentDocId = useMemo(() => user ? user.uid : null, [user]);
+
+    // Automatically prepopulate message and attach image preview if user came from clicking "Message" on a specific lost item
+    useEffect(() => {
+        if (passedItem) {
+            if (passedItem.itemName) {
+                setStudentMessage(`Hello Admin, I am inquiring about the lost item: "${passedItem.itemName}".`);
+            }
+        }
+    }, [passedItem]);
 
     const unreadCount = useMemo(() => {
         if (!chatHistory || !Array.isArray(chatHistory)) return 0;
@@ -110,18 +123,16 @@ function SMessages() {
 
     const handleSendToAdmin = async () => {
         const messageText = typeof studentMessage === 'string' ? studentMessage : "";
-        if ((!messageText.trim() && !imageFile) || !user || !studentDocId) {
+        const finalImageUrl = imageFile ? await uploadToCloudinary(imageFile) : (passedItem?.imageUrl || null);
+
+        if ((!messageText.trim() && !finalImageUrl) || !user || !studentDocId) {
             alert("Please type a message or select an image.");
             return;
         }
 
         try {
             setUploading(true);
-            let imageUrl = null;
-
-            if (imageFile) {
-                imageUrl = await uploadToCloudinary(imageFile);
-            }
+            let imageUrl = finalImageUrl;
 
             let activeFirstName = "";
             let activeLastName = "";
@@ -151,7 +162,7 @@ function SMessages() {
                 fullName: finalStudentName,
                 email: activeEmail,
                 avatarUrl: user.photoURL || DEFAULT_ICON,
-                message: imageUrl ? "📷 Sent an image" : messageText,
+                message: imageUrl ? "📷 Sent an item inquiry image" : messageText,
                 timestamp: serverTimestamp(),
                 unread: true,
                 unreadStudent: false,
@@ -329,6 +340,18 @@ function SMessages() {
                         </div>
 
                         <div className="chat-input-section">
+                            {/* Inquired Item Preview Indicator */}
+                            {passedItem && (
+                                <div className="attachment-preview-bar" style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(2, 132, 199, 0.1)', padding: '8px 12px', borderRadius: '8px', marginBottom: '8px' }}>
+                                    {passedItem.imageUrl && (
+                                        <img src={passedItem.imageUrl} alt="" style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'cover' }} />
+                                    )}
+                                    <div style={{ fontSize: '0.82rem', color: '#062438' }}>
+                                        <strong>Inquiring about:</strong> {passedItem.itemName}
+                                    </div>
+                                </div>
+                            )}
+
                             {imageFile && (
                                 <div className="attachment-preview-bar">
                                     <span>📷 Attachment: {imageFile.name}</span>
@@ -367,7 +390,7 @@ function SMessages() {
                                     />
                                     <span className="sender-tag-right">{user.displayName || user.email?.split('@')[0] || 'User'}</span>
                                 </div>
-                                <button className="send-btn" onClick={handleSendToAdmin} disabled={uploading || (!studentMessage.trim() && !imageFile)}>
+                                <button className="send-btn" onClick={handleSendToAdmin} disabled={uploading || (!studentMessage.trim() && !imageFile && !passedItem?.imageUrl)}>
                                     {uploading ? "..." : "Send"}
                                 </button>
                             </div>

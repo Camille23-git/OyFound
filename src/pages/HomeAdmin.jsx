@@ -23,6 +23,9 @@ const CATEGORIES = [
     "General Items"
 ];
 
+const CLOUDINARY_CLOUD_NAME = "dvfykqznw"; 
+const CLOUDINARY_UPLOAD_PRESET = "messages";
+
 // Helper to convert 24h string ("14:30") to 12h AM/PM string ("2:30 PM")
 const convert24To12h = (time24) => {
     if (!time24 || !time24.includes(":")) return time24 || "";
@@ -89,8 +92,10 @@ function HomeAdmin() {
         description: '',
         status: '',
         date: '',
-        time: ''
+        time: '',
+        imageUrl: ''
     });
+    const [newImageFile, setNewImageFile] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
@@ -124,6 +129,7 @@ function HomeAdmin() {
 
     const handleOpenEditModal = (report) => {
         setEditingReport(report);
+        setNewImageFile(null);
         setEditFormData({
             itemName: report.itemName || '',
             category: report.category || 'General Items',
@@ -132,8 +138,28 @@ function HomeAdmin() {
             description: report.description || '',
             status: report.status || 'Lost',
             date: report.date || '',
-            time: report.time || ''
+            time: report.time || '',
+            imageUrl: report.imageUrl || ''
         });
+    };
+
+    const uploadToCloudinary = async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+        const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+            { method: "POST", body: formData }
+        );
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error?.message || "Cloudinary Upload Failed");
+        }
+
+        const data = await response.json();
+        return data.secure_url; 
     };
 
     const handleSaveEdit = async (e) => {
@@ -142,13 +168,20 @@ function HomeAdmin() {
 
         setIsSaving(true);
         try {
+            let updatedImageUrl = editFormData.imageUrl;
+
+            // If a new image file was selected, upload it to Cloudinary
+            if (newImageFile) {
+                updatedImageUrl = await uploadToCloudinary(newImageFile);
+            }
+
             const newStatus = editFormData.status;
             const reportRef = doc(db, "reports", editingReport.id);
 
             // Calculate formatted time if time was provided
             const formattedTime = editFormData.time ? convert24To12h(editFormData.time) : '';
 
-            // 1. Update main report document status & date/time
+            // 1. Update main report document status, date/time & image
             await updateDoc(reportRef, {
                 itemName: editFormData.itemName,
                 category: editFormData.category,
@@ -158,7 +191,8 @@ function HomeAdmin() {
                 status: newStatus,
                 date: editFormData.date,
                 time: editFormData.time,
-                timeFormatted: formattedTime
+                timeFormatted: formattedTime,
+                imageUrl: updatedImageUrl
             });
 
             // 2. If marked as Unclaimed, Lost, or Found, wipe all student claim approvals for this item across user subcollections safely
@@ -190,6 +224,7 @@ function HomeAdmin() {
 
             alert(`Report updated to "${newStatus}"! ${isUnclaimedState ? "Item is now restored to Active Reports." : ""}`);
             setEditingReport(null);
+            setNewImageFile(null);
         } catch (error) {
             console.error("Error updating report:", error);
             alert("Failed to update report: " + error.message);
@@ -288,9 +323,48 @@ function HomeAdmin() {
                                 >
                                     <option value="Lost">Lost</option>
                                     <option value="Found">Found</option>
-                                    <option value="Unclaimed">Unclaimed</option>
-                                    <option value="Claimed">Claimed</option>
                                 </select>
+                            </div>
+
+                            {/* ITEM IMAGE EDIT / OPTIONAL REMOVAL */}
+                            <div className="edit-input-group">
+                                <label>Item Image (Optional)</label>
+                                {editFormData.imageUrl && (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                                        <img 
+                                            src={editFormData.imageUrl} 
+                                            alt="Current" 
+                                            style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #ccc' }} 
+                                        />
+                                        <button 
+                                            type="button" 
+                                            style={{ 
+                                                padding: '8px 14px', 
+                                                fontSize: '0.82rem', 
+                                                fontWeight: '600', 
+                                                background: '#ef4444', 
+                                                color: '#ffffff', 
+                                                border: 'none', 
+                                                borderRadius: '6px', 
+                                                cursor: 'pointer',
+                                                whiteSpace: 'nowrap',
+                                                flexShrink: 0,
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                            }}
+                                            onClick={() => setEditFormData({ ...editFormData, imageUrl: '' })}
+                                        >
+                                            Remove Image
+                                        </button>
+                                    </div>
+                                )}
+                                <input 
+                                    type="file" 
+                                    accept="image/*"
+                                    onChange={(e) => setNewImageFile(e.target.files[0])}
+                                />
+                                <small style={{ color: '#666', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>
+                                    Upload a new image to replace the current one, or remove it so the item can be posted as Found without a picture.
+                                </small>
                             </div>
 
                             <div className="edit-modal-actions">
